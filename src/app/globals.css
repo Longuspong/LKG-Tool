@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background: #f8fafc;
+  color: #0f172a;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Platz fuer die untere Tab-Leiste + iOS Safe-Area */
+.app-inhalt {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+}
+
+.tab-leiste {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Kein Zoom-Springen bei Eingabefeldern auf iOS (>=16px) */
+input,
+select,
+textarea,
+button {
+  font-size: 16px;
+}
+
+/* -------- Druckansicht (Grundgeruest; Feinschliff in Phase 5) -------- */
+@media print {
+  .kein-druck {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  .app-inhalt {
+    padding: 0 !important;
+  }
+  .druck-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .druck-tabelle th,
+  .druck-tabelle td {
+    border: 1px solid #cbd5e1;
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+}
