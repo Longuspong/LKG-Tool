@@ -1,5 +1,5 @@
 import { Person, Termin } from './types';
-import { heuteIso } from '../date';
+import { heuteIso, tageDifferenz } from '../date';
 
 /**
  * Abgeleitete Felder – NIE gespeichert, immer live aus den Terminen berechnet.
@@ -79,4 +79,59 @@ export function historieAlle(
   const out = new Map<string, PersonHistorie>();
   for (const p of personen) out.set(p.id, historieFuer(p.id, termine));
   return out;
+}
+
+/**
+ * Volles Archiv einer Person fuer die Detail-Sicht (Phase 3): die KOMPLETTE
+ * chronologische Beteiligungsliste, getrennt in Vergangenheit (absteigend) und
+ * Zukunft (aufsteigend), plus die schon in `historieFuer` bekannten Kennzahlen.
+ * Bewusst eine eigene Funktion, damit die schlanke Listen-Historie
+ * (`historieAlle`) nicht unnoetig alle Beteiligungen mitschleppt.
+ */
+export interface PersonArchiv {
+  anzahlBesuche: number;
+  letzterBesuch: string | null;
+  naechsterTermin: string | null;
+  /** Ganze Tage seit dem letzten Besuch (0 = heute), oder null wenn nie da. */
+  tageSeitLetztem: number | null;
+  proRolle: Record<Rollenbeteiligung, number>;
+  vergangene: TerminBeteiligung[]; // absteigend nach Datum (neueste zuerst)
+  kommende: TerminBeteiligung[];   // aufsteigend nach Datum (naechste zuerst)
+}
+
+export function archivFuer(personId: string, termine: Termin[]): PersonArchiv {
+  const heute = heuteIso();
+  const vergangene: TerminBeteiligung[] = [];
+  const kommende: TerminBeteiligung[] = [];
+
+  for (const t of termine) {
+    const rollen = beteiligungAn(t, personId);
+    if (rollen.length === 0) continue;
+    const eintrag: TerminBeteiligung = { terminId: t.id, datum: t.datum, rollen };
+    if (t.datum <= heute) vergangene.push(eintrag);
+    else kommende.push(eintrag);
+  }
+
+  vergangene.sort((a, b) => (a.datum < b.datum ? 1 : a.datum > b.datum ? -1 : 0));
+  kommende.sort((a, b) => (a.datum < b.datum ? -1 : a.datum > b.datum ? 1 : 0));
+
+  const proRolle: Record<Rollenbeteiligung, number> = {
+    prediger: 0,
+    einleitung: 0,
+    fahrdienst: 0,
+  };
+  for (const b of vergangene) {
+    for (const r of b.rollen) proRolle[r] += 1;
+  }
+
+  const letzterBesuch = vergangene[0]?.datum ?? null;
+  return {
+    anzahlBesuche: vergangene.length,
+    letzterBesuch,
+    naechsterTermin: kommende[0]?.datum ?? null,
+    tageSeitLetztem: letzterBesuch ? tageDifferenz(letzterBesuch, heute) : null,
+    proRolle,
+    vergangene,
+    kommende,
+  };
 }
