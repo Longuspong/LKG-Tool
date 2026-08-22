@@ -7,6 +7,7 @@ import { RegelTermin, TERMIN_TYPEN } from '@/lib/model/types';
 import { TYP_LABEL } from '@/lib/labels';
 import { WOCHENTAGE_LANG, formatDatumMitTag, heuteIso } from '@/lib/date';
 import { Feld, Karte, Knopf, cx, eingabeKlasse } from '@/components/ui';
+import RotationEditor from '@/components/RotationEditor';
 
 function downloadJson(text: string, dateiname: string) {
   const blob = new Blob([text], { type: 'application/json' });
@@ -195,6 +196,9 @@ export default function EinstellungenSeite() {
           ))}
         </div>
       </Karte>
+
+      {/* Rotationen */}
+      <RotationEditor />
 
       {/* Allgemeine Einstellungen */}
       <Karte titel="Allgemein">

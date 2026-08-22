@@ -4,11 +4,13 @@ Kleine, wartbare Terminplanung für eine landeskirchliche Gemeinschaft.
 Hobbyprojekt für **eine** Person, nutzbar auf **max. 2 Geräten** (Telefon + PC).
 Wichtigstes Ziel: **nichts übersehen oder doppelt planen.**
 
-> **Status: Phase 1 (MVP) fertig.** Datenmodell, Speicher-Schicht (Vercel Blob +
-> IndexedDB mit Versionsprüfung), JSON-Import/Export/Backup, Kalender-CRUD,
-> Monats-/Quartalsansicht, Dashboard-Lückenanzeige und PWA-Grundgerüst stehen.
-> Phasen 2–5 (Rotations-Engine, volles Archiv, Kontakt-Workflow, CSV/ICS/Druck)
-> folgen. Siehe [Fahrplan](#fahrplan).
+> **Status: Phase 2 fertig.** Auf dem MVP (Datenmodell, Speicher-Schicht mit
+> Versionsprüfung, JSON-Backup, Kalender-CRUD, Monats-/Quartalsansicht,
+> Dashboard-Lücken, PWA) baut jetzt die **Rotations-Engine** für Einleitung und
+> Fahrdienst auf: reihum verteilen mit Event-Pausierung, Vorschau und manuellem
+> Tausch, plus Reihenfolge-Editor in den Einstellungen.
+> Phasen 3–5 (volles Archiv, Kontakt-Workflow, CSV/ICS/Druck) folgen.
+> Siehe [Fahrplan](#fahrplan).
 
 ---
 
@@ -25,6 +27,27 @@ sondern drei Sichten auf denselben Bestand:
 So kann nichts auseinanderdriften.
 
 ---
+
+## Rotation (Einleitung / Fahrdienst)
+
+Wiederkehrende Dienste werden **reihum** auf die Gemeinschaftsstunden verteilt.
+Bedienung: im Kalender auf **„🔁 Rotation"**, Zeitraum wählen, Vorschau prüfen,
+bei Bedarf einzelne Zeilen von Hand tauschen, dann festschreiben. Die
+Reihenfolge selbst pflegst du in den Einstellungen unter **„Rotationen"**.
+
+Die Engine (`src/lib/model/rotation.ts`) ist bewusst **positionsbasiert** statt
+mit wanderndem Zeiger: Wer an einem Termin dran ist, ergibt sich aus der
+chronologischen Position des Slots unter allen betroffenen Terminen —
+`person = reihenfolge[(startIndex + position) % anzahl]`. Daraus folgt:
+
+- **Event-Pausierung:** Event-Tage sind keine betroffenen Slots und verschieben
+  die Zählung nicht – die Rotation „wartet" einfach.
+- **Driftfrei & idempotent:** Denselben Zeitraum mehrfach zu planen ändert
+  nichts; die Fortsetzung über Quartalsgrenzen ergibt sich von selbst.
+- **Zwei Modi:** *Nur Lücken füllen* (bestehende Einteilungen bleiben) oder
+  *ganzen Zeitraum neu verteilen*.
+- **Manueller Tausch** in der Vorschau verschiebt die anderen Termine nicht
+  (kein Kaskaden-Effekt); mit *nur Lücken* bleibt eine Handeinteilung dauerhaft.
 
 ## Technik
 
@@ -156,8 +179,10 @@ Das kritische 2-Geräte-Szenario wurde gegen die laufende App geprüft:
 
 - **Phase 1 – MVP (fertig):** Datenmodell, Speicher-Schicht + Versionsprüfung,
   JSON-Backup, Kalender-CRUD, Monats-/Quartalsansicht, Dashboard-Lücken, PWA.
-- **Phase 2:** Rotations-Engine (Einleitung/Fahrdienst) mit Event-Pausierung,
-  manuellem Tausch und Vorschau.
+- **Phase 2 – Rotations-Engine (fertig):** Einleitung/Fahrdienst reihum verteilen
+  (`src/lib/model/rotation.ts`), Event-Pausierung, positionsbasiert und damit
+  driftfrei/idempotent, Vorschau mit manuellem Tausch (`RotationsModal`),
+  Reihenfolge-Editor in den Einstellungen (`RotationEditor`).
 - **Phase 3:** Volles Archiv/Kontakte mit Historie, Suche und Filtern.
 - **Phase 4:** „Offene Stunden" mit Kontakt-Workflow und Vorschlagsfunktion.
 - **Phase 5:** CSV-/ICS-Import/Export, Druck-Ansicht, Feinschliff, Passcode beim

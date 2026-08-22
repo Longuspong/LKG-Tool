@@ -17,6 +17,7 @@ import { Karte, Knopf, Leer, Modal, cx } from '@/components/ui';
 import TerminZeile from '@/components/TerminZeile';
 import TerminFormular from '@/components/TerminFormular';
 import GeneratorModal from '@/components/GeneratorModal';
+import RotationsModal from '@/components/RotationsModal';
 
 type Ansicht = 'monat' | 'quartal' | 'liste';
 
@@ -33,6 +34,7 @@ export default function KalenderSeite() {
   const [neu, setNeu] = useState(false);
   const [tag, setTag] = useState<string | null>(null);
   const [generator, setGenerator] = useState(false);
+  const [rotation, setRotation] = useState(false);
   const [filterPerson, setFilterPerson] = useState('');
 
   const termine = data?.termine ?? [];
@@ -88,6 +90,9 @@ export default function KalenderSeite() {
         <div className="flex-1" />
         <Knopf variante="sekundaer" onClick={() => setGenerator(true)}>
           ↻ Regeltermine
+        </Knopf>
+        <Knopf variante="sekundaer" onClick={() => setRotation(true)}>
+          🔁 Rotation
         </Knopf>
         <Knopf variante="primaer" onClick={() => setNeu(true)}>
           ＋ Termin
@@ -156,6 +161,8 @@ export default function KalenderSeite() {
       )}
 
       {generator && <GeneratorModal jahr={jahr} monat={monat} onClose={() => setGenerator(false)} />}
+
+      {rotation && <RotationsModal jahr={jahr} monat={monat} onClose={() => setRotation(false)} />}
     </div>
   );
 }
