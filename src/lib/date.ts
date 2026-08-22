@@ -151,3 +151,20 @@ export function tageDifferenz(aIso: string, bIso: string): number {
   const b = isoZuDate(bIso).getTime();
   return Math.round((b - a) / 86_400_000);
 }
+
+/**
+ * Menschliche Relativangabe zu einer Tagesdifferenz (Zieltag − heute):
+ * negativ = Vergangenheit ("vor 3 Tagen"), positiv = Zukunft ("in 2 Wochen"),
+ * 0 = "heute". Grob gerundet – reicht fuer die Archiv-Anzeige.
+ */
+export function formatRelativeTage(differenz: number): string {
+  const t = Math.abs(differenz);
+  if (t === 0) return 'heute';
+  const einheit =
+    t === 1 ? '1 Tag'
+    : t < 14 ? `${t} Tagen`
+    : t < 60 ? `${Math.round(t / 7)} Wochen`
+    : t < 365 ? `${Math.round(t / 30)} Monaten`
+    : `${Math.round(t / 365)} Jahren`;
+  return differenz < 0 ? `vor ${einheit}` : `in ${einheit}`;
+}

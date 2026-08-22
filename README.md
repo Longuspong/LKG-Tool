@@ -4,12 +4,13 @@ Kleine, wartbare Terminplanung für eine landeskirchliche Gemeinschaft.
 Hobbyprojekt für **eine** Person, nutzbar auf **max. 2 Geräten** (Telefon + PC).
 Wichtigstes Ziel: **nichts übersehen oder doppelt planen.**
 
-> **Status: Phase 2 fertig.** Auf dem MVP (Datenmodell, Speicher-Schicht mit
-> Versionsprüfung, JSON-Backup, Kalender-CRUD, Monats-/Quartalsansicht,
-> Dashboard-Lücken, PWA) baut jetzt die **Rotations-Engine** für Einleitung und
-> Fahrdienst auf: reihum verteilen mit Event-Pausierung, Vorschau und manuellem
-> Tausch, plus Reihenfolge-Editor in den Einstellungen.
-> Phasen 3–5 (volles Archiv, Kontakt-Workflow, CSV/ICS/Druck) folgen.
+> **Status: Phase 3 fertig.** Auf MVP und Rotations-Engine baut jetzt das
+> **volle Kontakt-Archiv** auf: die Personen-Seite ist eine Archiv-Sicht mit
+> Suche (Name/Nr./Telefon/E-Mail), Rollen- und Status-Filter sowie mehreren
+> Sortierungen (Häufigkeit, zuletzt da, am längsten nicht da, nächster Termin).
+> Ein Klick öffnet die Detail-Karte einer Person mit Kennzahlen und der
+> vollständigen, aus den Terminen abgeleiteten Historie.
+> Phasen 4–5 (Kontakt-Workflow, CSV/ICS/Druck) folgen.
 > Siehe [Fahrplan](#fahrplan).
 
 ---
@@ -49,6 +50,25 @@ chronologischen Position des Slots unter allen betroffenen Terminen —
 - **Manueller Tausch** in der Vorschau verschiebt die anderen Termine nicht
   (kein Kaskaden-Effekt); mit *nur Lücken* bleibt eine Handeinteilung dauerhaft.
 
+## Kontakt-Archiv (Personen)
+
+Die Personen-Seite (`src/app/personen/page.tsx`) ist zugleich das **Archiv**:
+kein separater Datentopf, sondern die Kontaktliste mit den live aus den Terminen
+abgeleiteten Kennzahlen.
+
+- **Suchen** nach Name, Dienstnummer, Telefon oder E-Mail.
+- **Filtern** nach Rolle (Chips aus den Einstellungen) und Status
+  (aktiv / inaktiv / alle).
+- **Sortieren** nach Name, Häufigkeit, „zuletzt da", „am längsten nicht da"
+  (gut, um niemanden zu übersehen) oder nächstem Termin.
+- **Detail-Karte** (`PersonDetail`): Stammdaten mit Telefon-/Mail-Link,
+  Kennzahlen (Besuche gesamt und je Rolle, letzter/nächster Termin als
+  Relativangabe) und die **komplette Historie**. Von dort direkt die Person
+  bearbeiten oder einen Termin öffnen.
+
+Die volle Historie kommt aus `archivFuer` in `src/lib/model/derive.ts` –
+vergangene Beteiligungen absteigend, kommende aufsteigend, nichts gespeichert.
+
 ## Technik
 
 - **Next.js 14 (App Router) + TypeScript** – Frontend und die beiden
@@ -69,7 +89,7 @@ src/
     page.tsx                 Dashboard (Lücken-/Kollisionsanzeige)
     kalender/page.tsx        Monat/Quartal/Liste, CRUD, Slot-Generator
     offen/page.tsx           Offene Stunden (To-do-Liste)
-    personen/page.tsx        Kontakte (Grundfunktionen + abgeleitete Historie)
+    personen/page.tsx        Kontakt-Archiv (Suche/Filter/Sortierung + Detail)
     einstellungen/page.tsx   Import/Export/Backup, Regeltermine, Zugriffscode
     api/data/route.ts        GET/POST auf den gesamten Bestand (Versionsprüfung)
   lib/
@@ -183,7 +203,10 @@ Das kritische 2-Geräte-Szenario wurde gegen die laufende App geprüft:
   (`src/lib/model/rotation.ts`), Event-Pausierung, positionsbasiert und damit
   driftfrei/idempotent, Vorschau mit manuellem Tausch (`RotationsModal`),
   Reihenfolge-Editor in den Einstellungen (`RotationEditor`).
-- **Phase 3:** Volles Archiv/Kontakte mit Historie, Suche und Filtern.
+- **Phase 3 – Kontakt-Archiv (fertig):** Personen-Seite als Archiv-Sicht mit
+  Suche, Rollen-/Status-Filter und mehreren Sortierungen; Detail-Karte
+  (`PersonDetail`) mit Kennzahlen und voller abgeleiteter Historie
+  (`archivFuer` in `src/lib/model/derive.ts`).
 - **Phase 4:** „Offene Stunden" mit Kontakt-Workflow und Vorschlagsfunktion.
 - **Phase 5:** CSV-/ICS-Import/Export, Druck-Ansicht, Feinschliff, Passcode beim
   Öffnen.
