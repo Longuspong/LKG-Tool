@@ -83,5 +83,16 @@ export function validateDataFile(data: DataFile): Pruefergebnis {
     fehler.push(...validateTermin(t, personIds));
   }
 
+  // Rotations-Reihenfolgen: unbekannte Personen sind kein harter Fehler
+  // (deaktivierte Personen werden zur Laufzeit ohnehin uebersprungen), aber
+  // ein Hinweis hilft beim Aufraeumen.
+  for (const [rolle, reihe] of Object.entries(data.rotation ?? {})) {
+    for (const id of reihe?.reihenfolge ?? []) {
+      if (!personIds.has(id)) {
+        warnungen.push(`Rotation "${rolle}": id "${id}" verweist auf keine Person.`);
+      }
+    }
+  }
+
   return { ok: fehler.length === 0, fehler, warnungen };
 }

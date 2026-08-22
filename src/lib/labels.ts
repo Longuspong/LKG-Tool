@@ -41,3 +41,14 @@ export const KONTAKT_TON: Record<KontaktStatus, 'grau' | 'gelb' | 'gruen' | 'rot
   bestaetigt: 'gruen',
   abgesagt: 'rot',
 };
+
+/** Beschriftung fuer Rollen (Standard-Rollen sauber, Rest kapitalisiert). */
+export const ROLLE_LABEL: Record<string, string> = {
+  prediger: 'Prediger',
+  einleitung: 'Einleitung',
+  fahrdienst: 'Fahrdienst',
+};
+
+export function rolleLabel(rolle: string): string {
+  return ROLLE_LABEL[rolle] ?? rolle.charAt(0).toUpperCase() + rolle.slice(1);
+}
