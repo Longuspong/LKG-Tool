@@ -32,7 +32,36 @@ export interface DashboardLuecken {
   ohneEinleitung: Termin[];
   ohneFahrdienst: Termin[];
   kontaktOffen: Termin[];
+  abgesagt: Termin[];
   kollisionen: Kollision[];
+}
+
+/**
+ * Phase eines Termins im Kontakt-Workflow (Phase 4) – oder null, wenn hier
+ * nichts (mehr) zu tun ist. Reihenfolge = Dringlichkeit: eine Absage macht den
+ * Slot stecken (dringend), ein fehlender Prediger blockiert alles Weitere, dann
+ * folgen die noch offene bzw. laufende Absprache.
+ */
+export type OffenPhase = 'abgesagt' | 'ohnePrediger' | 'kontaktOffen' | 'kontaktiert';
+
+export const OFFEN_PHASEN: OffenPhase[] = [
+  'abgesagt',
+  'ohnePrediger',
+  'kontaktOffen',
+  'kontaktiert',
+];
+
+export function offenPhase(t: Termin): OffenPhase | null {
+  if (t.kontaktStatus === 'abgesagt') return 'abgesagt';
+  if (brauchtPrediger(t) && !t.predigerId) return 'ohnePrediger';
+  if (t.predigerId && t.kontaktStatus === 'offen') return 'kontaktOffen';
+  if (t.predigerId && t.kontaktStatus === 'kontaktiert') return 'kontaktiert';
+  return null;
+}
+
+/** Kommende Termine, die im Kontakt-Workflow noch Arbeit erfordern (chronologisch). */
+export function arbeitsliste(termine: Termin[], abIso = heuteIso()): Termin[] {
+  return kommendeTermine(termine, abIso).filter((t) => offenPhase(t) !== null);
 }
 
 const nachDatumZeit = (a: Termin, b: Termin) =>
@@ -53,10 +82,12 @@ export function berechneLuecken(termine: Termin[], abIso = heuteIso()): Dashboar
   );
   // "Ich habe jemanden geplant, aber noch nicht kontaktiert/bestaetigt."
   const kontaktOffen = kommend.filter((t) => t.predigerId && t.kontaktStatus === 'offen');
+  // "Jemand hat abgesagt" – der Slot muss neu besetzt werden, sonst faellt er durch.
+  const abgesagt = kommend.filter((t) => t.kontaktStatus === 'abgesagt');
 
   const kollisionen = findeKollisionen(kommend);
 
-  return { ohnePrediger, ohneEinleitung, ohneFahrdienst, kontaktOffen, kollisionen };
+  return { ohnePrediger, ohneEinleitung, ohneFahrdienst, kontaktOffen, abgesagt, kollisionen };
 }
 
 /** Kollisionen ueber die uebergebenen Termine (i.d.R. die kommenden). */
@@ -140,6 +171,7 @@ export function anzahlOffenePunkte(l: DashboardLuecken): number {
     l.ohneEinleitung.length +
     l.ohneFahrdienst.length +
     l.kontaktOffen.length +
+    l.abgesagt.length +
     l.kollisionen.length
   );
 }

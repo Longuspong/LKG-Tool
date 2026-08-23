@@ -1,4 +1,5 @@
 import { KontaktStatus, TerminStatus, TerminTyp } from './model/types';
+import { OffenPhase } from './model/gaps';
 
 /** Menschlich lesbare Beschriftungen + passende Badge-Toene fuer die UI. */
 
@@ -40,6 +41,29 @@ export const KONTAKT_TON: Record<KontaktStatus, 'grau' | 'gelb' | 'gruen' | 'rot
   kontaktiert: 'gelb',
   bestaetigt: 'gruen',
   abgesagt: 'rot',
+};
+
+/** Phasen im Kontakt-Workflow (offene Stunden, Phase 4). */
+export const OFFEN_PHASE_LABEL: Record<OffenPhase, string> = {
+  abgesagt: 'Absage – neu besetzen',
+  ohnePrediger: 'Ohne Prediger',
+  kontaktOffen: 'Kontakt offen',
+  kontaktiert: 'Rückmeldung ausstehend',
+};
+
+export const OFFEN_PHASE_TON: Record<OffenPhase, 'rot' | 'gelb' | 'blau' | 'grau'> = {
+  abgesagt: 'rot',
+  ohnePrediger: 'rot',
+  kontaktOffen: 'blau',
+  kontaktiert: 'gelb',
+};
+
+/** Kurzer Handlungshinweis je Phase (fuer die To-do-Zeile). */
+export const OFFEN_PHASE_HINWEIS: Record<OffenPhase, string> = {
+  abgesagt: 'Absage – bitte jemand anderen anfragen.',
+  ohnePrediger: 'Noch kein Prediger – jemanden vorschlagen und anfragen.',
+  kontaktOffen: 'Prediger steht – jetzt anfragen.',
+  kontaktiert: 'Angefragt – auf Zu- oder Absage warten.',
 };
 
 /** Beschriftung fuer Rollen (Standard-Rollen sauber, Rest kapitalisiert). */
