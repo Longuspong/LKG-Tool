@@ -131,7 +131,7 @@ export function PersonMulti({
         onChange={(e) => e.target.value && onChange([...werte, e.target.value])}
         className={eingabeKlasse}
       >
-        <option value="">＋ hinzufuegen…</option>
+        <option value="">＋ hinzufügen…</option>
         {liste.map((p) => (
           <option key={p.id} value={p.id}>
             {p.name}

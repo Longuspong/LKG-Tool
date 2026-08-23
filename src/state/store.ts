@@ -207,7 +207,7 @@ export const useApp = create<AppState>((set, get) => ({
       data: server,
       konflikt: null,
       pending: false,
-      meldung: { art: 'info', text: 'Serverstand uebernommen. Deine lokalen Aenderungen wurden verworfen.' },
+      meldung: { art: 'info', text: 'Serverstand übernommen. Deine lokalen Änderungen wurden verworfen.' },
     });
   },
 
@@ -226,10 +226,10 @@ export const useApp = create<AppState>((set, get) => ({
         data: res.data,
         konflikt: null,
         pending: false,
-        meldung: { art: 'ok', text: 'Deine Version wurde gespeichert (Serverstand ueberschrieben).' },
+        meldung: { art: 'ok', text: 'Deine Version wurde gespeichert (Serverstand überschrieben).' },
       });
     } else if (res.status === 'conflict') {
-      set({ konflikt: res.data, meldung: { art: 'warnung', text: 'Erneuter Konflikt – der Server wurde gerade wieder geaendert.' } });
+      set({ konflikt: res.data, meldung: { art: 'warnung', text: 'Erneuter Konflikt – der Server wurde gerade wieder geändert.' } });
     } else {
       set({ meldung: { art: 'fehler', text: 'Speichern fehlgeschlagen.' } });
     }
@@ -262,7 +262,7 @@ async function pushLokal(
   } else if (res.status === 'offline') {
     set({ online: false }); // bleibt pending
   } else if (res.status === 'invalid') {
-    set({ meldung: { art: 'fehler', text: 'Ungueltige Daten: ' + res.fehler.slice(0, 3).join(' ') } });
+    set({ meldung: { art: 'fehler', text: 'Ungültige Daten: ' + res.fehler.slice(0, 3).join(' ') } });
   } else {
     set({ meldung: { art: 'fehler', text: 'Speichern fehlgeschlagen.' } });
   }

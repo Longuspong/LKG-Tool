@@ -41,16 +41,16 @@ export default function GeraeteSperre() {
       return setRueck({ art: 'fehler', text: `Passcode braucht mindestens ${MIN_LAENGE} Zeichen.` });
     }
     if (neu !== neu2) {
-      return setRueck({ art: 'fehler', text: 'Die beiden Eingaben stimmen nicht ueberein.' });
+      return setRueck({ art: 'fehler', text: 'Die beiden Eingaben stimmen nicht überein.' });
     }
     try {
       await setzeSperre(neu);
     } catch {
-      return setRueck({ art: 'fehler', text: 'Konnte den Passcode nicht setzen (Verschluesselung nicht verfuegbar).' });
+      return setRueck({ art: 'fehler', text: 'Konnte den Passcode nicht setzen (Verschlüsselung nicht verfügbar).' });
     }
     setAktiv(true);
     zuruecksetzen();
-    setRueck({ art: 'ok', text: 'Passcode gespeichert. Er wird beim naechsten Oeffnen verlangt.' });
+    setRueck({ art: 'ok', text: 'Passcode gespeichert. Er wird beim nächsten Öffnen verlangt.' });
   }
 
   async function entfernen() {
@@ -60,7 +60,7 @@ export default function GeraeteSperre() {
     entferneSperre();
     setAktiv(false);
     zuruecksetzen();
-    setRueck({ art: 'ok', text: 'Geraete-Sperre entfernt.' });
+    setRueck({ art: 'ok', text: 'Geräte-Sperre entfernt.' });
   }
 
   return (

@@ -56,7 +56,7 @@ export default function CodeGate() {
           {pruefe ? 'Prüfe…' : 'Weiter'}
         </Knopf>
         <p className="mt-3 text-center text-xs text-slate-400">
-          Der Code wird nur auf diesem Geraet gemerkt.
+          Der Code wird nur auf diesem Gerät gemerkt.
         </p>
       </form>
     </div>

@@ -55,8 +55,8 @@ export default function DatenAustausch() {
   return (
     <Karte titel="Datenaustausch (CSV / ICS)">
       <p className="mb-3 text-sm text-slate-500">
-        Fuer den Austausch mit Kalender- und Tabellenprogrammen. Der ICS-Kalender laesst sich am Telefon oder PC
-        abonnieren/importieren; CSV oeffnet in Excel &amp; Co.
+        Für den Austausch mit Kalender- und Tabellenprogrammen. Der ICS-Kalender lässt sich am Telefon oder PC
+        abonnieren/importieren; CSV öffnet in Excel &amp; Co.
       </p>
 
       <p className="mb-1 text-xs font-medium text-slate-500">Export</p>
@@ -87,8 +87,8 @@ export default function DatenAustausch() {
       </div>
       <p className="mt-2 text-xs text-slate-400">
         Erwartete Spalten (erste Zeile): <code className="rounded bg-slate-100 px-1">Name</code>, optional Dienstnummer,
-        Telefon, E-Mail, Rollen, Aktiv, Notiz. Vorhandene Kontakte werden ueber Dienstnummer bzw. Name erkannt und
-        aktualisiert; nichts wird geloescht.
+        Telefon, E-Mail, Rollen, Aktiv, Notiz. Vorhandene Kontakte werden über Dienstnummer bzw. Name erkannt und
+        aktualisiert; nichts wird gelöscht.
       </p>
 
       {vorschau && (

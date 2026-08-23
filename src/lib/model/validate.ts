@@ -22,10 +22,10 @@ export interface Pruefergebnis {
 
 export function validatePerson(p: Person): string[] {
   const f: string[] = [];
-  if (!p.id || !/^p_\d+/.test(p.id)) f.push(`Person hat ungueltige id: ${p.id}`);
+  if (!p.id || !/^p_\d+/.test(p.id)) f.push(`Person hat ungültige id: ${p.id}`);
   if (!p.name || !p.name.trim()) f.push(`Person ${p.id}: Name ist Pflicht.`);
   if (p.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(p.email)) {
-    f.push(`Person ${p.id}: E-Mail sieht ungueltig aus (${p.email}).`);
+    f.push(`Person ${p.id}: E-Mail sieht ungültig aus (${p.email}).`);
   }
   if (p.dienstnummer != null && (!Number.isInteger(p.dienstnummer) || p.dienstnummer < 0)) {
     f.push(`Person ${p.id}: Dienstnummer muss eine positive Ganzzahl sein.`);
@@ -63,7 +63,7 @@ export function validateDataFile(data: DataFile): Pruefergebnis {
   const warnungen: string[] = [];
 
   if (typeof data.version !== 'number' || data.version < 1) {
-    fehler.push('Feld "version" fehlt oder ist ungueltig.');
+    fehler.push('Feld "version" fehlt oder ist ungültig.');
   }
   if (!istIsoDatum((data.updatedAt || '').slice(0, 10))) {
     warnungen.push('Feld "updatedAt" ist kein plausibler Zeitstempel.');

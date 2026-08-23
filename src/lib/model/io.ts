@@ -26,7 +26,7 @@ export function importJson(text: string): ImportErgebnis {
   } catch (e) {
     return {
       data: null,
-      pruefung: { ok: false, fehler: [`Kein gueltiges JSON: ${(e as Error).message}`], warnungen: [] },
+      pruefung: { ok: false, fehler: [`Kein gültiges JSON: ${(e as Error).message}`], warnungen: [] },
     };
   }
   const data = normalisiere(roh);
