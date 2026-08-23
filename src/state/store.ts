@@ -39,7 +39,7 @@ interface AppState {
   meldung: Meldung | null;
 
   init: () => Promise<void>;
-  setCode: (code: string) => Promise<void>;
+  setCode: (code: string) => Promise<'ok' | 'unauthorized' | 'offline' | 'error'>;
   aendern: (mut: (d: DataFile) => void) => Promise<void>;
   personAnlegen: (felder: Partial<Person> & { name: string }) => Promise<string>;
   ersetzen: (neu: DataFile) => Promise<void>;
@@ -121,9 +121,19 @@ export const useApp = create<AppState>((set, get) => ({
   },
 
   async setCode(code) {
+    // Erst den Code am Server pruefen und NUR bei Erfolg uebernehmen. Frueher
+    // wurde blind brauchtCode:false gesetzt und neu geladen – ein falscher Code
+    // liess dadurch kurz die App aufblitzen und sprang dann ohne Meldung zurueck
+    // zur Eingabe. Jetzt bleibt die Eingabe stehen und meldet den Grund.
+    set({ speichert: true });
+    const r = await remoteLaden(code);
+    set({ speichert: false });
+    if (r.status !== 'ok') return r.status; // 'unauthorized' | 'offline' | 'error'
+
     speichereCode(code);
     set({ code, brauchtCode: false });
     await get().init();
+    return 'ok';
   },
 
   async aendern(mut) {

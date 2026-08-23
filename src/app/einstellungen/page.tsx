@@ -281,8 +281,23 @@ function RollenEditor() {
   );
 }
 
-function ZugriffsCode({ setCode }: { setCode: (c: string) => Promise<void> }) {
+function ZugriffsCode({
+  setCode,
+}: {
+  setCode: (c: string) => Promise<'ok' | 'unauthorized' | 'offline' | 'error'>;
+}) {
   const [wert, setWert] = useState('');
+  const [rueck, setRueck] = useState<{ art: 'ok' | 'fehler'; text: string } | null>(null);
+
+  async function merken() {
+    const c = wert.trim();
+    if (!c) return;
+    const status = await setCode(c);
+    if (status === 'ok') setRueck({ art: 'ok', text: 'Code gemerkt und geprüft.' });
+    else if (status === 'unauthorized') setRueck({ art: 'fehler', text: 'Zugriffscode ist falsch.' });
+    else setRueck({ art: 'fehler', text: 'Konnte den Code nicht prüfen (Verbindung/Server).' });
+  }
+
   return (
     <Karte titel="Zugriffscode (dieses Gerät)">
       <p className="mb-3 text-sm text-slate-500">
@@ -294,14 +309,27 @@ function ZugriffsCode({ setCode }: { setCode: (c: string) => Promise<void> }) {
         <input
           type="password"
           value={wert}
-          onChange={(e) => setWert(e.target.value)}
+          onChange={(e) => {
+            setWert(e.target.value);
+            if (rueck) setRueck(null);
+          }}
           placeholder="Neuen Code merken"
           className={cx(eingabeKlasse, 'flex-1')}
         />
-        <Knopf variante="sekundaer" onClick={() => wert && setCode(wert.trim())}>
+        <Knopf variante="sekundaer" onClick={merken}>
           Merken
         </Knopf>
       </div>
+      {rueck && (
+        <p
+          className={cx(
+            'mt-3 rounded-lg px-3 py-2 text-sm',
+            rueck.art === 'ok' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600',
+          )}
+        >
+          {rueck.text}
+        </p>
+      )}
     </Karte>
   );
 }

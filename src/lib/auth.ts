@@ -11,9 +11,18 @@
 
 import { ACCESS_HEADER as HEADER } from './storage/protocol';
 
+/**
+ * Der konfigurierte Code, robust gegen versehentliche Leerzeichen/Zeilenumbrueche
+ * (haeufig beim Einfuegen in die Vercel-Env-UI). Ohne dieses Trimmen wuerde ein
+ * korrekt eingegebener Code an einem unsichtbaren Zeichen scheitern.
+ */
+function sollCode(): string {
+  return (process.env.APP_ACCESS_CODE ?? '').trim();
+}
+
 /** Ist ueberhaupt ein Schutz konfiguriert? */
 export function schutzAktiv(): boolean {
-  return !!process.env.APP_ACCESS_CODE && process.env.APP_ACCESS_CODE.length > 0;
+  return sollCode().length > 0;
 }
 
 /** Zeitkonstanter Vergleich, um Timing-Rueckschluesse zu vermeiden. */
@@ -27,8 +36,8 @@ function gleich(a: string, b: string): boolean {
 /** true, wenn die Anfrage zugelassen ist. */
 export function zugriffErlaubt(req: Request): boolean {
   if (!schutzAktiv()) return true;
-  const soll = process.env.APP_ACCESS_CODE as string;
-  const ist = req.headers.get(HEADER) ?? '';
+  const soll = sollCode();
+  const ist = (req.headers.get(HEADER) ?? '').trim();
   return gleich(ist, soll);
 }
 
