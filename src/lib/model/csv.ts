@@ -259,7 +259,7 @@ export function importPersonenCsv(text: string, bestand: Person[]): PersonenImpo
     const zeile = zeilen[i];
     const name = (zeile[spalten.name] ?? '').trim();
     if (!name) {
-      warnungen.push(`Zeile ${i + 1}: ohne Name – uebersprungen.`);
+      warnungen.push(`Zeile ${i + 1}: ohne Name – übersprungen.`);
       continue;
     }
     const dienstnummer = parseDienstnummer(zelle(zeile, 'dienstnummer'));
@@ -284,7 +284,7 @@ export function importPersonenCsv(text: string, bestand: Person[]): PersonenImpo
 
     const email = felder.email;
     if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-      warnungen.push(`Zeile ${i + 1} (${name}): E-Mail sieht ungueltig aus (${email}).`);
+      warnungen.push(`Zeile ${i + 1} (${name}): E-Mail sieht ungültig aus (${email}).`);
     }
 
     if (treffer >= 0) {

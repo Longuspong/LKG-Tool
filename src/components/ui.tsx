@@ -130,7 +130,7 @@ export function Modal({
           <button
             onClick={onSchliessen}
             className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-            aria-label="Schliessen"
+            aria-label="Schließen"
           >
             ✕
           </button>

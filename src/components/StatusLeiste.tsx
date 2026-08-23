@@ -12,10 +12,10 @@ function Konfliktbanner() {
   return (
     <div className="border-b border-amber-200 bg-amber-50 px-4 py-3">
       <div className="mx-auto max-w-3xl">
-        <p className="text-sm font-semibold text-amber-800">Auf dem anderen Geraet wurde geaendert.</p>
+        <p className="text-sm font-semibold text-amber-800">Auf dem anderen Gerät wurde geändert.</p>
         <p className="mt-0.5 text-xs text-amber-700">
           Serverstand vom {formatDatumMitTag(konflikt.updatedAt.slice(0, 10))} (Version {konflikt.version}). Um nichts
-          unbemerkt zu ueberschreiben, bitte entscheiden:
+          unbemerkt zu überschreiben, bitte entscheiden:
         </p>
         <div className="mt-2 flex flex-wrap gap-2">
           <Knopf variante="primaer" onClick={() => konfliktServerUebernehmen()} disabled={speichert}>

@@ -62,8 +62,8 @@ export default function TerminFormular({
   );
 
   async function speichern() {
-    if (!istIsoDatum(entwurf.datum)) return setFehler('Bitte ein gueltiges Datum waehlen.');
-    if (!istUhrzeit(entwurf.uhrzeit)) return setFehler('Bitte eine gueltige Uhrzeit (HH:MM) waehlen.');
+    if (!istIsoDatum(entwurf.datum)) return setFehler('Bitte ein gültiges Datum wählen.');
+    if (!istUhrzeit(entwurf.uhrzeit)) return setFehler('Bitte eine gültige Uhrzeit (HH:MM) wählen.');
     const id = entwurf.id || terminId(entwurf.datum, entwurf.uhrzeit, andereTermine);
     const gespeichert: Termin = { ...entwurf, id };
     await aendern((d) => {
@@ -76,7 +76,7 @@ export default function TerminFormular({
 
   async function loeschen() {
     if (!termin) return;
-    if (!confirm('Diesen Termin wirklich loeschen?')) return;
+    if (!confirm('Diesen Termin wirklich löschen?')) return;
     await aendern((d) => {
       d.termine = d.termine.filter((t) => t.id !== termin.id);
     });

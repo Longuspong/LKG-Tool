@@ -59,8 +59,8 @@ export default function GeneratorModal({
     >
       <div className="space-y-3">
         <p className="text-sm text-slate-500">
-          Erzeugt leere, offene Slots fuer die aktiven Regeltermine. Bereits vorhandene Termine und Event-Tage werden
-          uebersprungen.
+          Erzeugt leere, offene Slots für die aktiven Regeltermine. Bereits vorhandene Termine und Event-Tage werden
+          übersprungen.
         </p>
 
         <div className="grid grid-cols-2 gap-3">
