@@ -35,25 +35,48 @@ button {
   font-size: 16px;
 }
 
-/* -------- Druckansicht (Grundgeruest; Feinschliff in Phase 5) -------- */
+/* -------- Druckansicht (Phase 5) -------- */
+@page {
+  margin: 1.4cm;
+}
+
 @media print {
   .kein-druck {
     display: none !important;
   }
   body {
     background: #fff;
+    color: #0f172a;
+    /* Hintergrundfarben/Badges auch im Ausdruck erhalten. */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .app-inhalt {
+    max-width: none !important;
     padding: 0 !important;
   }
+  /* Umbrueche innerhalb einer Terminzeile vermeiden. */
   .druck-tabelle {
     width: 100%;
     border-collapse: collapse;
+  }
+  /* Kopfzeile auf jeder Druckseite wiederholen. */
+  .druck-tabelle thead {
+    display: table-header-group;
+  }
+  .druck-tabelle tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
   .druck-tabelle th,
   .druck-tabelle td {
     border: 1px solid #cbd5e1;
     padding: 4px 6px;
     font-size: 11px;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  .druck-tabelle th {
+    background: #f1f5f9;
   }
 }

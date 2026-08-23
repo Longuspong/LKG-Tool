@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useApp } from '@/state/store';
 import { Termin } from '@/lib/model/types';
 import {
@@ -283,9 +284,12 @@ function QuartalsAnsicht({
   return (
     <div className="space-y-4">
       <div className="kein-druck flex justify-end">
-        <Knopf variante="sekundaer" onClick={() => window.print()}>
-          🖨 Drucken
-        </Knopf>
+        <Link
+          href="/drucken"
+          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white px-3.5 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-300 transition hover:bg-slate-50"
+        >
+          🖨 Druckplan
+        </Link>
       </div>
       {monate.map((m) => {
         const { start, ende } = monatsbereich(jahr, m);

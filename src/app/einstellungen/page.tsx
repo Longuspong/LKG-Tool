@@ -8,6 +8,8 @@ import { TYP_LABEL } from '@/lib/labels';
 import { WOCHENTAGE_LANG, formatDatumMitTag, heuteIso } from '@/lib/date';
 import { Feld, Karte, Knopf, cx, eingabeKlasse } from '@/components/ui';
 import RotationEditor from '@/components/RotationEditor';
+import DatenAustausch from '@/components/DatenAustausch';
+import GeraeteSperre from '@/components/GeraeteSperre';
 
 function downloadJson(text: string, dateiname: string) {
   const blob = new Blob([text], { type: 'application/json' });
@@ -125,6 +127,9 @@ export default function EinstellungenSeite() {
         )}
       </Karte>
 
+      {/* Datenaustausch (CSV / ICS) + Druckplan */}
+      <DatenAustausch />
+
       {/* Regeltermine */}
       <Karte titel="Regeltermine (für den Slot-Generator)">
         <div className="space-y-3">
@@ -222,13 +227,16 @@ export default function EinstellungenSeite() {
         <RollenEditor />
       </Karte>
 
-      {/* Zugriffscode */}
+      {/* Zugriffscode (Server) */}
       <ZugriffsCode setCode={setCode} />
+
+      {/* Geräte-Sperre (lokaler Passcode beim Öffnen) */}
+      <GeraeteSperre />
 
       {/* Info */}
       <Karte titel="Über">
         <p className="text-sm text-slate-500">
-          Gemeindeplaner · Phase 1 (MVP). Daten liegen als eine JSON im Vercel Blob (Single Point of Truth) mit lokalem
+          Gemeindeplaner · Phase 5. Daten liegen als eine JSON im Vercel Blob (Single Point of Truth) mit lokalem
           IndexedDB-Cache. Änderungen werden zwischen deinen Geräten per Versionsprüfung abgeglichen.
         </p>
         <p className="mt-2 text-xs text-slate-400">Datenversion: {data.version} · Schema: {data.schema}</p>

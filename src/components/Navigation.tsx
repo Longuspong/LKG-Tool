@@ -25,6 +25,7 @@ function titelFuer(pfad: string): string {
   if (pfad.startsWith('/offen')) return 'Offene Stunden';
   if (pfad.startsWith('/personen')) return 'Personen';
   if (pfad.startsWith('/archiv')) return 'Archiv';
+  if (pfad.startsWith('/drucken')) return 'Dienstplan drucken';
   if (pfad.startsWith('/einstellungen')) return 'Einstellungen';
   return 'Gemeindeplaner';
 }
