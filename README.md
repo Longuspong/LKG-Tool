@@ -4,13 +4,12 @@ Kleine, wartbare Terminplanung für eine landeskirchliche Gemeinschaft.
 Hobbyprojekt für **eine** Person, nutzbar auf **max. 2 Geräten** (Telefon + PC).
 Wichtigstes Ziel: **nichts übersehen oder doppelt planen.**
 
-> **Status: Phase 4 fertig.** Die Seite „Offene Stunden" ist jetzt ein
-> **geführter Kontakt-Workflow**: eine nach Dringlichkeit gruppierte Arbeitsliste
-> (Absage → ohne Prediger → Kontakt offen → Rückmeldung ausstehend), die sich am
-> Stück durchgehen lässt. Beim Besetzen **schlägt die App Personen vor** – wer am
-> längsten nicht dran war, steht oben, sodass niemand übersehen wird. Danach
-> führen ein Anruf-/Mail-Knopf und klare Statusschritte (kontaktiert → Zusage /
-> Absage) bis zur Bestätigung. Phase 5 (CSV/ICS/Druck) folgt.
+> **Status: Phase 5 fertig.** Der Bestand lässt sich jetzt **austauschen und
+> ausdrucken**: der Kalender als **ICS** (zum Abonnieren im Telefon-/PC-Kalender),
+> Termine und Kontakte als **CSV** (für Excel &amp; Co.), und die Kontaktliste per
+> **CSV-Import** einlesen (additiv, mit Vorschau – nichts wird gelöscht). Eine eigene
+> **Druck-Ansicht** (`/drucken`) erzeugt einen sauberen Dienstplan zum Aushängen.
+> Zusätzlich schützt ein optionaler **Passcode beim Öffnen** die App auf dem Gerät.
 > Siehe [Fahrplan](#fahrplan).
 
 ---
@@ -106,6 +105,34 @@ besetzen. Anruf-/Mail-Knöpfe nutzen die im Archiv gepflegten Kontaktdaten.
 Das Dashboard leitet seine Prediger-Listen (ohne Prediger, Kontakt offen,
 Absagen) in denselben Workflow; die anderen Lücken öffnen weiter das Formular.
 
+## Austausch, Druck & Geräte-Sperre (Phase 5)
+
+Alles Weitere sitzt in den **Einstellungen** bzw. unter `/drucken` und hält sich an
+das Grundprinzip: exportiert wird der abgeleitete Bestand, nichts wird doppelt
+gepflegt.
+
+- **ICS-Export** (`src/lib/model/ics.ts`): der Kalender als `.ics` zum Abonnieren
+  bzw. Importieren im normalen Kalenderprogramm. Uhrzeiten sind bewusst *lokale,
+  schwebende* Zeit ohne Zeitzone (10:00 bleibt überall 10:00). Bewusst **nur
+  Export** – die App bleibt die alleinige Planungsquelle.
+- **CSV-Export** (`src/lib/model/csv.ts`): Termine und Personen als CSV. Trenner ist
+  das Semikolon mit UTF-8-BOM, damit deutsches Excel ohne Nachfrage sauber öffnet.
+- **CSV-Import der Kontaktliste**: robuster, abhängigkeitsfreier Parser (erkennt
+  `;`, `,` oder Tab und gequotete Felder). Bestehende Kontakte werden über
+  Dienstnummer bzw. Name **erkannt und aktualisiert**, Neue angelegt – **nie
+  gelöscht** (sonst bräche die abgeleitete Historie). Fehlende Spalten überschreiben
+  keine vorhandenen Werte. Eine Vorschau zeigt „x neu · y aktualisiert“.
+- **Druck-Ansicht** (`src/app/drucken/page.tsx`): ein sauberer Dienstplan
+  (Monat/Quartal) als Tabelle zum Aushängen. Die Bedienelemente tragen `kein-druck`;
+  die `@media print`-Regeln (in `globals.css`) blenden die App-Hülle aus, wiederholen
+  die Kopfzeile je Seite und verhindern Zeilenumbrüche mitten im Termin.
+- **Passcode beim Öffnen** (`src/lib/lock.ts`, `src/components/AppLock.tsx`): eine
+  optionale **lokale Geräte-Sperre**. Ehrlich eingeordnet ist das ein *Sichtschutz*,
+  keine Verschlüsselung – die Daten liegen als Offline-Cache ohnehin auf dem Gerät.
+  Gespeichert wird nur `Salt + SHA-256(Salt+PIN)` (Web Crypto), nie die PIN selbst;
+  die Prüfung läuft rein lokal. Der Server-Zugriffscode (`APP_ACCESS_CODE`) bleibt
+  davon unberührt. Die App sperrt beim Laden und nach längerem Wegklicken erneut.
+
 ## Technik
 
 - **Next.js 14 (App Router) + TypeScript** – Frontend und die beiden
@@ -127,14 +154,16 @@ src/
     kalender/page.tsx        Monat/Quartal/Liste, CRUD, Slot-Generator
     offen/page.tsx           Offene Stunden (Kontakt-Workflow: Arbeitsliste + Durchlauf)
     personen/page.tsx        Kontakt-Archiv (Suche/Filter/Sortierung + Detail)
-    einstellungen/page.tsx   Import/Export/Backup, Regeltermine, Zugriffscode
+    drucken/page.tsx         Druck-Ansicht: Dienstplan (Monat/Quartal) zum Aushängen
+    einstellungen/page.tsx   Import/Export/Backup, CSV/ICS, Regeltermine, Sperre
     api/data/route.ts        GET/POST auf den gesamten Bestand (Versionsprüfung)
   lib/
     model/                   Datenmodell: types, validate, derive, gaps,
-                             vorschlag, workflow, rotation, slots, io …
+                             vorschlag, workflow, rotation, slots, io, csv, ics …
     storage/                 Speicher-Schicht (Interface + Blob/Datei/IndexedDB/Client)
-    date.ts, labels.ts, auth.ts
-  components/                UI-Bausteine (Shell, Navigation, Formulare …)
+    date.ts, labels.ts, auth.ts, lock.ts, download.ts
+  components/                UI-Bausteine (Shell, Navigation, Formulare,
+                             DatenAustausch, GeraeteSperre, AppLock …)
   state/store.ts             App-State + Sync-Logik (Optimistic Concurrency)
 ```
 
@@ -250,5 +279,8 @@ Das kritische 2-Geräte-Szenario wurde gegen die laufende App geprüft:
   dran zuerst", `src/lib/model/vorschlag.ts`), gebündelter Statuskette
   (`src/lib/model/workflow.ts`) und geführtem Ablauf (`KontaktWorkflow`) inkl.
   Anruf-/Mail-Direktknöpfen; Dashboard leitet die Prediger-Lücken hierher.
-- **Phase 5:** CSV-/ICS-Import/Export, Druck-Ansicht, Feinschliff, Passcode beim
-  Öffnen.
+- **Phase 5 – Austausch, Druck & Sperre (fertig):** ICS-Export des Kalenders und
+  CSV-Export von Terminen/Personen (`src/lib/model/ics.ts`, `src/lib/model/csv.ts`),
+  additiver CSV-Import der Kontaktliste mit Vorschau, eigene Druck-Ansicht
+  (`src/app/drucken/page.tsx`) mit Feinschliff der `@media print`-Regeln sowie
+  optionaler lokaler Passcode beim Öffnen (`src/lib/lock.ts`, `AppLock`).

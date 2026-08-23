@@ -1,17 +1,44 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '@/state/store';
+import { sperreAktiv } from '@/lib/lock';
 import { TopBar, TabLeiste } from './Navigation';
 import StatusLeiste from './StatusLeiste';
 import CodeGate from './CodeGate';
+import AppLock from './AppLock';
+
+/** Nach so langer Verborgenheit (ms) wird beim Zurueckkommen erneut gesperrt. */
+const WIEDER_SPERREN_NACH = 2 * 60 * 1000;
 
 /**
  * Rahmen der App: startet die Synchronisation, haengt Online-/Fokus-Listener
- * ein und rendert je nach Zustand Ladeanzeige, Code-Gate oder die Module.
+ * ein und rendert je nach Zustand Sperrbildschirm, Ladeanzeige, Code-Gate oder
+ * die Module.
  */
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { bereit, brauchtCode, init, aktualisieren } = useApp();
+  // Lokale Geraete-Sperre: startet auf `false` (gleiche erste Ausgabe wie SSR),
+  // wird nach dem Mounten anhand der lokalen Konfiguration gesetzt.
+  const [gesperrt, setGesperrt] = useState(false);
+
+  useEffect(() => {
+    setGesperrt(sperreAktiv());
+  }, []);
+
+  // Beim Zurueckkommen aus dem Hintergrund ggf. erneut sperren (Sichtschutz).
+  useEffect(() => {
+    let verborgenSeit = 0;
+    const beiSichtwechsel = () => {
+      if (document.hidden) {
+        verborgenSeit = Date.now();
+      } else if (sperreAktiv() && verborgenSeit && Date.now() - verborgenSeit > WIEDER_SPERREN_NACH) {
+        setGesperrt(true);
+      }
+    };
+    document.addEventListener('visibilitychange', beiSichtwechsel);
+    return () => document.removeEventListener('visibilitychange', beiSichtwechsel);
+  }, []);
 
   useEffect(() => {
     init();
@@ -31,6 +58,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Sperrbildschirm zuerst – noch bevor Inhalte sichtbar werden.
+  if (gesperrt) return <AppLock onEntsperrt={() => setGesperrt(false)} />;
 
   if (!bereit) {
     return (

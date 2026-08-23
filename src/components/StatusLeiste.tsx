@@ -81,10 +81,10 @@ function BackupErinnerung() {
 
 export default function StatusLeiste() {
   return (
-    <>
+    <div className="kein-druck">
       <Konfliktbanner />
       <BackupErinnerung />
       <MeldungToast />
-    </>
+    </div>
   );
 }
