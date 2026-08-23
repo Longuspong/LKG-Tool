@@ -4,13 +4,13 @@ Kleine, wartbare Terminplanung für eine landeskirchliche Gemeinschaft.
 Hobbyprojekt für **eine** Person, nutzbar auf **max. 2 Geräten** (Telefon + PC).
 Wichtigstes Ziel: **nichts übersehen oder doppelt planen.**
 
-> **Status: Phase 3 fertig.** Auf MVP und Rotations-Engine baut jetzt das
-> **volle Kontakt-Archiv** auf: die Personen-Seite ist eine Archiv-Sicht mit
-> Suche (Name/Nr./Telefon/E-Mail), Rollen- und Status-Filter sowie mehreren
-> Sortierungen (Häufigkeit, zuletzt da, am längsten nicht da, nächster Termin).
-> Ein Klick öffnet die Detail-Karte einer Person mit Kennzahlen und der
-> vollständigen, aus den Terminen abgeleiteten Historie.
-> Phasen 4–5 (Kontakt-Workflow, CSV/ICS/Druck) folgen.
+> **Status: Phase 4 fertig.** Die Seite „Offene Stunden" ist jetzt ein
+> **geführter Kontakt-Workflow**: eine nach Dringlichkeit gruppierte Arbeitsliste
+> (Absage → ohne Prediger → Kontakt offen → Rückmeldung ausstehend), die sich am
+> Stück durchgehen lässt. Beim Besetzen **schlägt die App Personen vor** – wer am
+> längsten nicht dran war, steht oben, sodass niemand übersehen wird. Danach
+> führen ein Anruf-/Mail-Knopf und klare Statusschritte (kontaktiert → Zusage /
+> Absage) bis zur Bestätigung. Phase 5 (CSV/ICS/Druck) folgt.
 > Siehe [Fahrplan](#fahrplan).
 
 ---
@@ -69,6 +69,43 @@ abgeleiteten Kennzahlen.
 Die volle Historie kommt aus `archivFuer` in `src/lib/model/derive.ts` –
 vergangene Beteiligungen absteigend, kommende aufsteigend, nichts gespeichert.
 
+## Offene Stunden: Kontakt-Workflow & Vorschläge
+
+„Offene Stunden" (`src/app/offen/page.tsx`) ist die **Arbeitsliste**: gezeigt wird
+nur, was noch etwas braucht, gruppiert nach Dringlichkeit (`offenPhase` in
+`src/lib/model/gaps.ts`):
+
+1. **Absage – neu besetzen** (jemand hat abgesagt, der Slot hängt),
+2. **Ohne Prediger** (fehlt komplett),
+3. **Kontakt offen** (Prediger steht, noch nicht angefragt),
+4. **Rückmeldung ausstehend** (angefragt, wartet auf Zu-/Absage).
+
+Ein Klick öffnet den geführten Ablauf (`KontaktWorkflow`); „Alle durchgehen"
+blättert die ganze Liste chronologisch durch (die Reihenfolge wird beim Start
+eingefroren, damit erledigte Slots die Navigation nicht verschieben).
+
+**Vorschlagsfunktion** (`src/lib/model/vorschlag.ts`): Für einen offenen Slot
+werden die aktiven Personen live gerankt – wie alles hier **abgeleitet, nichts
+gespeichert**. Leitgedanke „nichts übersehen": Wer **am längsten nicht dran** war,
+steht oben. Reihenfolge:
+
+1. passende Rolle zuerst,
+2. nicht am selben Tag schon verplant (Doppelbuchung vermeiden),
+3. längste Pause in dieser Rolle zuerst („noch nie" ganz oben),
+4. weniger Einsätze zuerst (Ausgleich), dann Name.
+
+Jede Zeile nennt die Begründung („zuletzt vor 3 Wochen · 2× Prediger") und warnt
+bei Doppelbuchung.
+
+**Statuskette** (`src/lib/model/workflow.ts`): reine Mutatoren bündeln die
+sinnvollen Übergänge an einer Stelle, damit `status` (offen/besetzt/bestätigt)
+und `kontaktStatus` (offen/kontaktiert/bestätigt/abgesagt) nicht auseinander­
+laufen: zuweisen → besetzt, kontaktiert, Zusage → bestätigt, Absage → neu
+besetzen. Anruf-/Mail-Knöpfe nutzen die im Archiv gepflegten Kontaktdaten.
+
+Das Dashboard leitet seine Prediger-Listen (ohne Prediger, Kontakt offen,
+Absagen) in denselben Workflow; die anderen Lücken öffnen weiter das Formular.
+
 ## Technik
 
 - **Next.js 14 (App Router) + TypeScript** – Frontend und die beiden
@@ -88,12 +125,13 @@ src/
   app/
     page.tsx                 Dashboard (Lücken-/Kollisionsanzeige)
     kalender/page.tsx        Monat/Quartal/Liste, CRUD, Slot-Generator
-    offen/page.tsx           Offene Stunden (To-do-Liste)
+    offen/page.tsx           Offene Stunden (Kontakt-Workflow: Arbeitsliste + Durchlauf)
     personen/page.tsx        Kontakt-Archiv (Suche/Filter/Sortierung + Detail)
     einstellungen/page.tsx   Import/Export/Backup, Regeltermine, Zugriffscode
     api/data/route.ts        GET/POST auf den gesamten Bestand (Versionsprüfung)
   lib/
-    model/                   Datenmodell: types, validate, derive, gaps, slots, io …
+    model/                   Datenmodell: types, validate, derive, gaps,
+                             vorschlag, workflow, rotation, slots, io …
     storage/                 Speicher-Schicht (Interface + Blob/Datei/IndexedDB/Client)
     date.ts, labels.ts, auth.ts
   components/                UI-Bausteine (Shell, Navigation, Formulare …)
@@ -207,6 +245,10 @@ Das kritische 2-Geräte-Szenario wurde gegen die laufende App geprüft:
   Suche, Rollen-/Status-Filter und mehreren Sortierungen; Detail-Karte
   (`PersonDetail`) mit Kennzahlen und voller abgeleiteter Historie
   (`archivFuer` in `src/lib/model/derive.ts`).
-- **Phase 4:** „Offene Stunden" mit Kontakt-Workflow und Vorschlagsfunktion.
+- **Phase 4 – Kontakt-Workflow (fertig):** „Offene Stunden" als nach Dringlichkeit
+  gruppierte Arbeitsliste mit Durchlauf, Vorschlagsfunktion („am längsten nicht
+  dran zuerst", `src/lib/model/vorschlag.ts`), gebündelter Statuskette
+  (`src/lib/model/workflow.ts`) und geführtem Ablauf (`KontaktWorkflow`) inkl.
+  Anruf-/Mail-Direktknöpfen; Dashboard leitet die Prediger-Lücken hierher.
 - **Phase 5:** CSV-/ICS-Import/Export, Druck-Ansicht, Feinschliff, Passcode beim
   Öffnen.

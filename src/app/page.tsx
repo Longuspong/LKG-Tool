@@ -4,19 +4,22 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useApp } from '@/state/store';
 import { Termin } from '@/lib/model/types';
-import { berechneLuecken, kommendeTermine, anzahlOffenePunkte } from '@/lib/model/gaps';
+import { berechneLuecken, kommendeTermine, anzahlOffenePunkte, arbeitsliste } from '@/lib/model/gaps';
 import { formatDatumMitTag } from '@/lib/date';
 import { Abzeichen, Karte, Knopf, Leer, cx } from '@/components/ui';
 import TerminZeile from '@/components/TerminZeile';
 import TerminFormular from '@/components/TerminFormular';
+import KontaktWorkflow from '@/components/KontaktWorkflow';
 
 export default function Dashboard() {
   const data = useApp((s) => s.data);
   const [bearbeite, setBearbeite] = useState<Termin | null>(null);
+  const [workflowId, setWorkflowId] = useState<string | null>(null);
   const [neu, setNeu] = useState(false);
 
   const luecken = useMemo(() => (data ? berechneLuecken(data.termine) : null), [data]);
   const kommend = useMemo(() => (data ? kommendeTermine(data.termine).slice(0, 8) : []), [data]);
+  const zuTun = useMemo(() => (data ? arbeitsliste(data.termine).length : 0), [data]);
 
   if (!data) {
     return (
@@ -40,7 +43,7 @@ export default function Dashboard() {
           href="/offen"
           icon="📋"
           titel="Offene Stunden"
-          hinweis={`${data.termine.filter((t) => t.status === 'offen').length} offen`}
+          hinweis={zuTun > 0 ? `${zuTun} zu erledigen` : 'alles erledigt'}
         />
         <Kachel href="/personen" icon="👥" titel="Personen" hinweis={`${data.personen.filter((p) => p.aktiv).length} aktiv`} />
         <Kachel href="/einstellungen" icon="⚙️" titel="Einstellungen" hinweis="Import / Backup" />
@@ -69,14 +72,25 @@ export default function Dashboard() {
         ) : (
           luecken && (
             <div className="space-y-4">
-              <LueckenListe titel="Ohne Prediger" ton="rot" termine={luecken.ohnePrediger} onKlick={setBearbeite} />
+              <LueckenListe
+                titel="Absage – neu besetzen"
+                ton="rot"
+                termine={luecken.abgesagt}
+                onKlick={(t) => setWorkflowId(t.id)}
+              />
+              <LueckenListe
+                titel="Ohne Prediger"
+                ton="rot"
+                termine={luecken.ohnePrediger}
+                onKlick={(t) => setWorkflowId(t.id)}
+              />
               <LueckenListe titel="Ohne Einleitung" ton="gelb" termine={luecken.ohneEinleitung} onKlick={setBearbeite} />
               <LueckenListe titel="Ohne Fahrdienst" ton="gelb" termine={luecken.ohneFahrdienst} onKlick={setBearbeite} />
               <LueckenListe
                 titel="Kontakt noch offen"
                 ton="blau"
                 termine={luecken.kontaktOffen}
-                onKlick={setBearbeite}
+                onKlick={(t) => setWorkflowId(t.id)}
               />
 
               {luecken.kollisionen.length > 0 && (
@@ -121,6 +135,17 @@ export default function Dashboard() {
           onClose={() => {
             setBearbeite(null);
             setNeu(false);
+          }}
+        />
+      )}
+
+      {workflowId && (
+        <KontaktWorkflow
+          terminId={workflowId}
+          onClose={() => setWorkflowId(null)}
+          onDetails={(t) => {
+            setWorkflowId(null);
+            setBearbeite(t);
           }}
         />
       )}
