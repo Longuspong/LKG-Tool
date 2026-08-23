@@ -6,17 +6,27 @@ import { Knopf, eingabeKlasse } from './ui';
 
 /** Zugriffscode-Eingabe (Shared Secret). Wird nur gezeigt, wenn der Server
  *  einen Code verlangt (401) und noch keiner / ein falscher gemerkt ist. */
+const FEHLER_TEXT: Record<'unauthorized' | 'offline' | 'error', string> = {
+  unauthorized: 'Zugriffscode ist falsch.',
+  offline: 'Keine Verbindung zum Server. Bitte später erneut versuchen.',
+  error: 'Serverfehler beim Prüfen des Codes.',
+};
+
 export default function CodeGate() {
   const setCode = useApp((s) => s.setCode);
   const [wert, setWert] = useState('');
   const [pruefe, setPruefe] = useState(false);
+  const [fehler, setFehler] = useState<string | null>(null);
 
   async function absenden(e: React.FormEvent) {
     e.preventDefault();
     if (!wert.trim()) return;
     setPruefe(true);
-    await setCode(wert.trim());
+    setFehler(null);
+    const status = await setCode(wert.trim());
     setPruefe(false);
+    // Bei Erfolg verschwindet dieses Gate (brauchtCode = false); sonst Grund zeigen.
+    if (status !== 'ok') setFehler(FEHLER_TEXT[status]);
   }
 
   return (
@@ -32,12 +42,16 @@ export default function CodeGate() {
         <input
           type="password"
           value={wert}
-          onChange={(e) => setWert(e.target.value)}
+          onChange={(e) => {
+            setWert(e.target.value);
+            if (fehler) setFehler(null);
+          }}
           className={eingabeKlasse}
           placeholder="Zugriffscode"
           autoFocus
           autoComplete="current-password"
         />
+        {fehler && <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{fehler}</p>}
         <Knopf type="submit" variante="primaer" className="mt-4 w-full" disabled={pruefe}>
           {pruefe ? 'Prüfe…' : 'Weiter'}
         </Knopf>
