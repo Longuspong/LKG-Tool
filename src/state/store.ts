@@ -168,6 +168,15 @@ export const useApp = create<AppState>((set, get) => ({
 
   async aktualisieren() {
     const { code, data, pending } = get();
+    // Gibt es ausstehende lokale Aenderungen, werden sie zuerst hochgeschoben.
+    // So loest ein Klick auf "Nicht synchron" (und der Fokus-/Online-Abgleich)
+    // tatsaechlich einen Push aus, statt nur vom Server zu lesen. Die
+    // Versionspruefung in pushLokal deckt dabei Konflikte auf (409), statt
+    // fremde Aenderungen blind zu ueberschreiben.
+    if (pending && data) {
+      await pushLokal(set, get);
+      return;
+    }
     const r = await remoteLaden(code);
     if (r.status === 'unauthorized') return set({ brauchtCode: true });
     if (r.status === 'offline') return set({ online: false });
@@ -177,9 +186,6 @@ export const useApp = create<AppState>((set, get) => ({
     if (!data) {
       await idbSpeichern(remote);
       return set({ data: remote });
-    }
-    if (pending && remote.version !== data.version) {
-      return set({ konflikt: remote });
     }
     if (remote.version > data.version) {
       await idbSpeichern(remote);
