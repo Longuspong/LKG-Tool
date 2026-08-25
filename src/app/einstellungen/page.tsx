@@ -50,9 +50,23 @@ export default function EinstellungenSeite() {
   }
   async function importUebernehmen() {
     if (!importVorschau?.data) return;
+    // ersetzen() speichert lokal und stoesst direkt einen Push an. Danach den
+    // tatsaechlichen Sync-Ausgang melden, statt blind "importiert" zu zeigen.
     await ersetzen(importVorschau.data);
     setImportVorschau(null);
-    meldungSetzen({ art: 'ok', text: 'Daten importiert.' });
+    const st = useApp.getState();
+    if (st.konflikt) {
+      meldungSetzen({
+        art: 'warnung',
+        text: 'Import lokal übernommen – der Server wurde zwischenzeitlich geändert. Bitte den Konflikt auflösen.',
+      });
+    } else if (st.pending && !st.online) {
+      meldungSetzen({ art: 'info', text: 'Import gespeichert. Wird synchronisiert, sobald wieder online.' });
+    } else if (st.pending) {
+      meldungSetzen({ art: 'info', text: 'Import gespeichert – Synchronisation läuft…' });
+    } else {
+      meldungSetzen({ art: 'ok', text: 'Daten importiert und mit dem Server synchronisiert.' });
+    }
   }
 
   // --- Regeltermine ---

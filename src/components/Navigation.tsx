@@ -53,7 +53,7 @@ function SyncAnzeige() {
   return (
     <button
       onClick={() => aktualisieren()}
-      title="Mit Server abgleichen"
+      title={pending ? 'Jetzt synchronisieren (lokale Änderungen hochladen)' : 'Mit Server abgleichen'}
       className={cx('flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium hover:bg-slate-100', ton)}
     >
       <span className={cx('inline-block h-2 w-2 rounded-full', online && !pending ? 'bg-emerald-500' : 'bg-amber-500')} />
