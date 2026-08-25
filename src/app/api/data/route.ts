@@ -4,6 +4,7 @@ import { zugriffErlaubt } from '@/lib/auth';
 import { DataFile } from '@/lib/model/types';
 import { validateDataFile } from '@/lib/model/validate';
 import { SaveRequest } from '@/lib/storage/protocol';
+import { fehlversuchRegistrieren } from '@/lib/ratelimit';
 
 /**
  * Zwei Routen auf EINE Ressource: der gesamte Bestand als JSON.
@@ -17,12 +18,25 @@ import { SaveRequest } from '@/lib/storage/protocol';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-function keinZugriff() {
+/**
+ * Fehlgeschlagene Authentifizierung: den Fehlversuch fuer das Rate-Limit
+ * zaehlen und – je nach Haeufigkeit – mit 429 (zu viele Versuche) oder sonst
+ * mit 401 (Code falsch) antworten. `zugriffErlaubt` selbst bleibt zeitkonstant;
+ * hierher kommen wir nur, wenn die Pruefung bereits fehlgeschlagen ist.
+ */
+function keinZugriff(req: Request) {
+  const { blockieren, retryNachSek } = fehlversuchRegistrieren(req);
+  if (blockieren) {
+    return NextResponse.json(
+      { status: 'ratelimit', fehler: 'Zu viele Versuche, bitte kurz warten.' },
+      { status: 429, headers: { 'Retry-After': String(retryNachSek) } },
+    );
+  }
   return NextResponse.json({ status: 'unauthorized' }, { status: 401 });
 }
 
 export async function GET(req: Request) {
-  if (!zugriffErlaubt(req)) return keinZugriff();
+  if (!zugriffErlaubt(req)) return keinZugriff(req);
   try {
     const storage = await getServerStorage();
     const data = await storage.load();
@@ -39,7 +53,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  if (!zugriffErlaubt(req)) return keinZugriff();
+  if (!zugriffErlaubt(req)) return keinZugriff(req);
 
   let body: SaveRequest;
   try {

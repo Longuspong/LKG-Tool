@@ -10,6 +10,7 @@ import { ACCESS_HEADER } from './protocol';
 export type LadeErgebnis =
   | { status: 'ok'; data: DataFile }
   | { status: 'unauthorized' }
+  | { status: 'ratelimit' }
   | { status: 'offline' }
   | { status: 'error'; fehler: string };
 
@@ -17,6 +18,7 @@ export type SpeicherErgebnis =
   | { status: 'ok'; data: DataFile }
   | { status: 'conflict'; data: DataFile }
   | { status: 'unauthorized' }
+  | { status: 'ratelimit' }
   | { status: 'invalid'; fehler: string[] }
   | { status: 'offline' }
   | { status: 'error'; fehler: string };
@@ -32,6 +34,7 @@ export async function remoteLaden(code: string | null): Promise<LadeErgebnis> {
       cache: 'no-store',
     });
     if (res.status === 401) return { status: 'unauthorized' };
+    if (res.status === 429) return { status: 'ratelimit' };
     if (!res.ok) return { status: 'error', fehler: `HTTP ${res.status}` };
     const j = await res.json();
     return { status: 'ok', data: j.data as DataFile };
@@ -52,6 +55,7 @@ export async function remoteSpeichern(
       body: JSON.stringify({ baseVersion, data }),
     });
     if (res.status === 401) return { status: 'unauthorized' };
+    if (res.status === 429) return { status: 'ratelimit' };
     const j = await res.json().catch(() => ({} as any));
     if (res.status === 409) return { status: 'conflict', data: j.data as DataFile };
     if (res.status === 422) {

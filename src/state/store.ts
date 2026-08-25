@@ -21,6 +21,9 @@ import { remoteLaden, remoteSpeichern } from '@/lib/storage/client';
 
 const LS_CODE = 'gemeindeplaner.zugriffscode';
 
+/** Einheitliche Meldung, wenn der Server wegen zu vieler Versuche bremst (429). */
+const LIMIT_TEXT = 'Zu viele Versuche, bitte kurz warten.';
+
 export type MeldungArt = 'ok' | 'info' | 'warnung' | 'fehler';
 export interface Meldung {
   art: MeldungArt;
@@ -39,7 +42,7 @@ interface AppState {
   meldung: Meldung | null;
 
   init: () => Promise<void>;
-  setCode: (code: string) => Promise<'ok' | 'unauthorized' | 'offline' | 'error'>;
+  setCode: (code: string) => Promise<'ok' | 'unauthorized' | 'ratelimit' | 'offline' | 'error'>;
   aendern: (mut: (d: DataFile) => void) => Promise<void>;
   personAnlegen: (felder: Partial<Person> & { name: string }) => Promise<string>;
   ersetzen: (neu: DataFile) => Promise<void>;
@@ -87,6 +90,10 @@ export const useApp = create<AppState>((set, get) => ({
     const r = await remoteLaden(code);
     if (r.status === 'unauthorized') {
       set({ brauchtCode: true, bereit: true });
+      return;
+    }
+    if (r.status === 'ratelimit') {
+      set({ bereit: true, online: true, meldung: { art: 'warnung', text: LIMIT_TEXT } });
       return;
     }
     if (r.status === 'offline' || r.status === 'error') {
@@ -189,6 +196,7 @@ export const useApp = create<AppState>((set, get) => ({
     }
     const r = await remoteLaden(code);
     if (r.status === 'unauthorized') return set({ brauchtCode: true });
+    if (r.status === 'ratelimit') return set({ meldung: { art: 'warnung', text: LIMIT_TEXT } });
     if (r.status === 'offline') return set({ online: false });
     if (r.status === 'error') return;
     set({ online: true });
@@ -242,34 +250,79 @@ export const useApp = create<AppState>((set, get) => ({
   },
 }));
 
+/**
+ * Save-Serialisierung gegen Selbst-Konflikte.
+ *
+ * Frueher loeste jede einzelne Aenderung (z.B. jeder Tastendruck) sofort einen
+ * eigenen POST aus. Der erste POST erhoehte serverseitig die version, aber die
+ * unmittelbar folgenden POSTs waren schon unterwegs und trugen noch die alte
+ * baseVersion -> der Server meldete 409, obwohl es dasselbe Geraet war
+ * (falscher "Selbst-Konflikt").
+ *
+ * Loesung: hoechstens EIN POST gleichzeitig. Kommt waehrend eines laufenden
+ * Saves eine weitere Aenderung, merken wir uns das nur (`erneutNoetig`) und
+ * schieben nach Abschluss den *neuesten* Stand einmal nach — mit der frischen,
+ * vom Server erhoehten version. Da immer der komplette DataFile gespeichert
+ * wird, genuegt dieses Koaleszieren; wir muessen nicht N Saves aufreihen.
+ *
+ * Die Modul-Variablen liegen bewusst ausserhalb des Stores (Single-Instance-App).
+ */
+let speichertGerade = false; // genau ein POST gleichzeitig
+let erneutNoetig = false; // waehrend des POST kam eine weitere Aenderung
+
 /** Schiebt den aktuellen lokalen Stand zum Server (mit Versionspruefung). */
 async function pushLokal(
   set: (partial: Partial<AppState>) => void,
   get: () => AppState,
 ) {
-  const { data, code } = get();
-  if (!data) return;
   if (typeof navigator !== 'undefined' && !navigator.onLine) {
     set({ online: false });
     return; // bleibt pending, wird spaeter nachgereicht
   }
+  if (speichertGerade) {
+    erneutNoetig = true; // laufender Save uebernimmt den neuesten Stand danach
+    return;
+  }
+  speichertGerade = true;
   set({ speichert: true });
-  const res = await remoteSpeichern(data, data.version, code);
-  set({ speichert: false });
-
-  if (res.status === 'ok') {
-    await idbSpeichern(res.data);
-    await idbPendingSetzen(false);
-    set({ data: res.data, pending: false, online: true });
-  } else if (res.status === 'conflict') {
-    set({ konflikt: res.data, online: true });
-  } else if (res.status === 'unauthorized') {
-    set({ brauchtCode: true });
-  } else if (res.status === 'offline') {
-    set({ online: false }); // bleibt pending
-  } else if (res.status === 'invalid') {
-    set({ meldung: { art: 'fehler', text: 'Ungültige Daten: ' + res.fehler.slice(0, 3).join(' ') } });
-  } else {
-    set({ meldung: { art: 'fehler', text: 'Speichern fehlgeschlagen.' } });
+  try {
+    do {
+      erneutNoetig = false;
+      const { data, code } = get();
+      if (!data) break;
+      const res = await remoteSpeichern(data, data.version, code);
+      if (res.status === 'ok') {
+        // Server hat die version erhoeht; der naechste Schleifendurchlauf nutzt
+        // dadurch automatisch die frische baseVersion -> keine Selbst-Konflikte.
+        await idbSpeichern(res.data);
+        await idbPendingSetzen(false);
+        set({ data: res.data, pending: false, online: true });
+      } else if (res.status === 'conflict') {
+        // Echter Fremd-Konflikt: das andere Geraet hat geschrieben. Schleife
+        // verlassen, den Serverstand merken, die UI loest den Konflikt auf.
+        set({ konflikt: res.data, online: true });
+        break;
+      } else if (res.status === 'unauthorized') {
+        set({ brauchtCode: true });
+        break;
+      } else if (res.status === 'ratelimit') {
+        // Server bremst (429). Aenderung bleibt pending und wird spaeter erneut
+        // versucht; Konflikt-/Offline-Pfad bleiben unberuehrt.
+        set({ online: true, meldung: { art: 'warnung', text: LIMIT_TEXT } });
+        break;
+      } else if (res.status === 'offline') {
+        set({ online: false }); // bleibt pending
+        break;
+      } else if (res.status === 'invalid') {
+        set({ meldung: { art: 'fehler', text: 'Ungültige Daten: ' + res.fehler.slice(0, 3).join(' ') } });
+        break;
+      } else {
+        set({ meldung: { art: 'fehler', text: 'Speichern fehlgeschlagen.' } });
+        break;
+      }
+    } while (erneutNoetig); // waehrend des POST kam Neues -> mit frischer version erneut
+  } finally {
+    speichertGerade = false;
+    set({ speichert: false });
   }
 }

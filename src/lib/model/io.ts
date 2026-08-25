@@ -18,7 +18,54 @@ export interface ImportErgebnis {
   pruefung: Pruefergebnis;
 }
 
-/** Parst und normalisiert einen JSON-String zu einem DataFile. */
+/** Fehler, wenn ein Bestand aus einer NEUEREN App-Version stammt (schema > SCHEMA_VERSION). */
+export class SchemaZukunftError extends Error {}
+
+/**
+ * Migrationspfad: hebt einen (evtl. aelteren) Bestand anhand `data.schema`
+ * schrittweise auf SCHEMA_VERSION an und lehnt ein Schema aus der ZUKUNFT ab,
+ * statt Daten zu beschaedigen.
+ *
+ * Klare Reihenfolge / Verantwortungstrennung:
+ *   1. Zukunfts-Schema erkennen und ablehnen (SchemaZukunftError).
+ *   2. Schrittweise Format-Migrationen (von1nach2, ...) – aktuell noch keine,
+ *      da SCHEMA_VERSION = 1 (No-op-Geruest, s.u.).
+ *   3. `normalisiere()` DANACH fuellt fehlende Felder auf; das Auffuellen bleibt
+ *      allein Sache von normalisiere, die Formatstufe allein Sache von migriere.
+ */
+export function migriere(roh: unknown): DataFile {
+  const o = roh && typeof roh === 'object' ? (roh as Record<string, unknown>) : {};
+  // Fehlendes Schema gilt als "aelter als die erste Version" -> wird migriert.
+  const schema = typeof o.schema === 'number' ? o.schema : 0;
+
+  if (schema > SCHEMA_VERSION) {
+    throw new SchemaZukunftError(
+      `Diese Datei stammt aus einer neueren App-Version (Schema ${schema}, unterstützt bis ${SCHEMA_VERSION}). ` +
+        `Bitte zuerst die App aktualisieren. Der Import wurde abgebrochen, um die Daten nicht zu beschädigen.`,
+    );
+  }
+
+  // --- Schrittweise Format-Migrationen -------------------------------------
+  // Aktuell gibt es nur Schema 1, daher ist hier noch nichts zu tun. Kuenftige
+  // Stufen werden nach genau diesem Muster ergaenzt (jeweils reine Umformung
+  // des rohen Objekts, BEVOR normalisiere die Felder auffuellt):
+  //
+  //   let stand: unknown = roh;
+  //   if (schema < 2) stand = von1nach2(stand);
+  //   if (schema < 3) stand = von2nach3(stand);
+  //   const data = normalisiere(stand);
+  //
+  // function von1nach2(d: unknown): unknown {
+  //   const x = (d && typeof d === 'object' ? d : {}) as Record<string, unknown>;
+  //   return { ...x, /* neues/umbenanntes Feld setzen */ schema: 2 };
+  // }
+
+  const data = normalisiere(roh);
+  data.schema = SCHEMA_VERSION; // nach erfolgreicher Migration autoritativ
+  return data;
+}
+
+/** Parst, migriert und normalisiert einen JSON-String zu einem DataFile. */
 export function importJson(text: string): ImportErgebnis {
   let roh: unknown;
   try {
@@ -29,9 +76,20 @@ export function importJson(text: string): ImportErgebnis {
       pruefung: { ok: false, fehler: [`Kein gültiges JSON: ${(e as Error).message}`], warnungen: [] },
     };
   }
-  const data = normalisiere(roh);
+
+  // Reihenfolge: erst migrieren (Formatstufe, lehnt Zukunft ab), dann validieren.
+  let data: DataFile;
+  try {
+    data = migriere(roh);
+  } catch (e) {
+    if (e instanceof SchemaZukunftError) {
+      return { data: null, pruefung: { ok: false, fehler: [e.message], warnungen: [] } };
+    }
+    throw e;
+  }
+
   const pruefung = validateDataFile(data);
-  return { data: pruefung.ok ? data : data, pruefung };
+  return { data, pruefung };
 }
 
 /** Fuellt ein (evtl. unvollstaendiges) Objekt zu einem validen DataFile auf. */

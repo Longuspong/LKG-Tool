@@ -6,8 +6,9 @@ import { Knopf, eingabeKlasse } from './ui';
 
 /** Zugriffscode-Eingabe (Shared Secret). Wird nur gezeigt, wenn der Server
  *  einen Code verlangt (401) und noch keiner / ein falscher gemerkt ist. */
-const FEHLER_TEXT: Record<'unauthorized' | 'offline' | 'error', string> = {
+const FEHLER_TEXT: Record<'unauthorized' | 'ratelimit' | 'offline' | 'error', string> = {
   unauthorized: 'Zugriffscode ist falsch.',
+  ratelimit: 'Zu viele Versuche, bitte kurz warten.',
   offline: 'Keine Verbindung zum Server. Bitte später erneut versuchen.',
   error: 'Serverfehler beim Prüfen des Codes.',
 };
@@ -39,7 +40,11 @@ export default function CodeGate() {
           <h1 className="text-lg font-semibold text-slate-800">Gemeindeplaner</h1>
           <p className="mt-1 text-sm text-slate-500">Bitte Zugriffscode eingeben.</p>
         </div>
+        <label htmlFor="zugriffscode" className="sr-only">
+          Zugriffscode
+        </label>
         <input
+          id="zugriffscode"
           type="password"
           value={wert}
           onChange={(e) => {
