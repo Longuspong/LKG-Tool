@@ -21,6 +21,9 @@ const MAX_FEHLVERSUCHE = 5; // so viele Fehlversuche pro Fenster sind noch ok
 // key (Client-IP) -> Zeitstempel (ms) der juengsten Fehlversuche im Fenster.
 const fehlversuche = new Map<string, number[]>();
 
+// Zeitpunkt des letzten globalen Aufraeumens (Speicher-Hygiene, s.u.).
+let letzterSweep = 0;
+
 /** Ermittelt einen stabilen Client-Schluessel aus den Proxy-Headern. */
 export function clientSchluessel(req: Request): string {
   const xff = req.headers.get('x-forwarded-for');
@@ -31,6 +34,21 @@ export function clientSchluessel(req: Request): string {
   const real = req.headers.get('x-real-ip')?.trim();
   if (real) return real;
   return 'sammel'; // neutraler Sammelschluessel, wenn keine IP erkennbar ist
+}
+
+/**
+ * Raeumt hoechstens EINMAL pro Fenster alle verfallenen Eintraege ab. Der
+ * pro-Key-Aufraeumer in `frischeFehler` greift nur beim naechsten Zugriff
+ * desselben Keys; ein einzelner, nie wiederholter Fehlversuch bliebe sonst
+ * liegen. Dieser gedrosselte Sweep haelt die Map dauerhaft klein, ohne bei
+ * jedem Aufruf ueber alle Keys zu laufen.
+ */
+function raeumeVerfalleneAuf(jetzt: number): void {
+  if (jetzt - letzterSweep < FENSTER_MS) return;
+  letzterSweep = jetzt;
+  for (const [key, zeiten] of fehlversuche) {
+    if (zeiten.every((t) => jetzt - t >= FENSTER_MS)) fehlversuche.delete(key);
+  }
 }
 
 /** Liefert die noch im Fenster liegenden Fehlversuche und raeumt Altes auf. */
@@ -53,6 +71,7 @@ export interface RateLimitStand {
  * damit sich das Zeitfenster deterministisch testen laesst.
  */
 export function fehlversuchRegistrieren(req: Request, jetzt: number = Date.now()): RateLimitStand {
+  raeumeVerfalleneAuf(jetzt);
   const key = clientSchluessel(req);
   const frisch = frischeFehler(key, jetzt);
   frisch.push(jetzt);

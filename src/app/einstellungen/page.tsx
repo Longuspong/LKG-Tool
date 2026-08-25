@@ -369,7 +369,11 @@ function ZugriffsCode({
         festgelegt.
       </p>
       <div className="flex gap-2">
+        <label htmlFor="zugriffscode-merken" className="sr-only">
+          Neuen Zugriffscode
+        </label>
         <input
+          id="zugriffscode-merken"
           type="password"
           value={wert}
           onChange={(e) => {

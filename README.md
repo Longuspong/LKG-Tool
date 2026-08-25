@@ -245,7 +245,7 @@ als genug).
 
 ---
 
-## Getestet (Phase-1-Abnahme)
+## Getestet
 
 Das kritische 2-Geräte-Szenario wurde gegen die laufende App geprüft:
 
@@ -259,6 +259,23 @@ Das kritische 2-Geräte-Szenario wurde gegen die laufende App geprüft:
 - Browser-Durchlauf (Chromium): Dashboard rendert, Slot-Generator erzeugt die
   Regeltermine (erster Sonntag 15:00, sonst 10:00; Mittwoch 19:30), Lücken
   erscheinen, Daten bleiben nach Reload erhalten. ✅
+
+### Automatisierte Tests (Vitest)
+
+`npm test` nagelt die reine Fachlogik fest (Node-Umgebung, keine schweren
+Abhängigkeiten):
+
+- **Datum** (`src/lib/date.ts`): Datumsspannen inkl. Grenzen/Monatswechsel/
+  Schaltjahr, Quartals-/Monatsbereich, deutsches ↔ ISO-Datum, `plusTage` über
+  Monats-/Jahresgrenzen.
+- **Model** (`ids`, `validate`, `derive`, `gaps`, `slots`): ID-Vergabe und
+  Kollisions-Suffixe, doppelte IDs und referenzielle Integrität, Vergangenheit/
+  Zukunft-Trennung (heutiges Datum als Parameter injiziert), Lücken-/
+  Kollisionserkennung mit Event-Pausierung, Slot-Generator mit Sonderuhrzeit.
+- **Migration** (`io.ts`): Import mit/ohne `schema`, Ablehnung eines Schemas aus
+  der Zukunft.
+- **Rate-Limit** (`ratelimit.ts`): Fenster-Grenze, Fenster-Reset, getrennte
+  Clients.
 
 ---
 
@@ -284,3 +301,11 @@ Das kritische 2-Geräte-Szenario wurde gegen die laufende App geprüft:
   additiver CSV-Import der Kontaktliste mit Vorschau, eigene Druck-Ansicht
   (`src/app/drucken/page.tsx`) mit Feinschliff der `@media print`-Regeln sowie
   optionaler lokaler Passcode beim Öffnen (`src/lib/lock.ts`, `AppLock`).
+- **Wartung & Härtung (fertig):** die falschen „Selbst-Konflikte" beim schnellen
+  Tippen beseitigt (serialisiertes, koaleszierendes Speichern in
+  `src/state/store.ts`; die echte 409-Erkennung bleibt), Unit-Tests für die reine
+  Logik (Vitest, siehe [Getestet](#getestet)), einfaches Rate-Limiting gegen
+  Brute-Force auf `/api/data` (`src/lib/ratelimit.ts`, HTTP 429), sauberer
+  Schema-Migrationspfad mit Ablehnung inkompatibler Zukunftsversionen
+  (`migriere` in `src/lib/model/io.ts`) sowie Security-Header/CSP in
+  `next.config.mjs`.
