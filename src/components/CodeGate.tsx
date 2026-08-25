@@ -40,7 +40,11 @@ export default function CodeGate() {
           <h1 className="text-lg font-semibold text-slate-800">Gemeindeplaner</h1>
           <p className="mt-1 text-sm text-slate-500">Bitte Zugriffscode eingeben.</p>
         </div>
+        <label htmlFor="zugriffscode" className="sr-only">
+          Zugriffscode
+        </label>
         <input
+          id="zugriffscode"
           type="password"
           value={wert}
           onChange={(e) => {
