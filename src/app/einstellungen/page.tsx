@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useApp } from '@/state/store';
 import { exportJson, importJson, ImportErgebnis } from '@/lib/model/io';
 import { RegelTermin, TERMIN_TYPEN } from '@/lib/model/types';
@@ -21,6 +21,46 @@ function downloadJson(text: string, dateiname: string) {
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+/**
+ * Entkoppeltes Textfeld: haelt den Tipp-Stand lokal und meldet die Aenderung
+ * erst beim Verlassen des Feldes (onBlur) nach oben. So loest nicht jeder
+ * Tastendruck ein Speichern aus — es wird hoechstens einmal je Feld gespeichert.
+ * Externe Aenderungen (z.B. ein Server-Sync) werden uebernommen, solange das
+ * Feld nicht gerade bearbeitet wird.
+ */
+function EntkoppeltesFeld({
+  wert,
+  aufAenderung,
+  className,
+  type = 'text',
+}: {
+  wert: string;
+  aufAenderung: (neu: string) => void;
+  className?: string;
+  type?: 'text' | 'number';
+}) {
+  const [lokal, setLokal] = useState(wert);
+  const [fokus, setFokus] = useState(false);
+
+  useEffect(() => {
+    if (!fokus) setLokal(wert);
+  }, [wert, fokus]);
+
+  return (
+    <input
+      type={type}
+      value={lokal}
+      onFocus={() => setFokus(true)}
+      onChange={(e) => setLokal(e.target.value)}
+      onBlur={() => {
+        setFokus(false);
+        if (lokal !== wert) aufAenderung(lokal);
+      }}
+      className={className}
+    />
+  );
 }
 
 export default function EinstellungenSeite() {
@@ -150,9 +190,9 @@ export default function EinstellungenSeite() {
           {s.regelTermine.map((r, i) => (
             <div key={i} className="rounded-xl border border-slate-200 p-3">
               <div className="mb-2 flex items-center justify-between">
-                <input
-                  value={r.label}
-                  onChange={(e) => regelAendern(i, { label: e.target.value })}
+                <EntkoppeltesFeld
+                  wert={r.label}
+                  aufAenderung={(neu) => regelAendern(i, { label: neu })}
                   className="w-40 rounded-lg border border-slate-200 px-2 py-1 text-sm font-medium"
                 />
                 <label className="flex items-center gap-1.5 text-xs text-slate-500">
@@ -204,9 +244,9 @@ export default function EinstellungenSeite() {
                   />
                 </Feld>
                 <Feld label="Ort">
-                  <input
-                    value={r.ort}
-                    onChange={(e) => regelAendern(i, { ort: e.target.value })}
+                  <EntkoppeltesFeld
+                    wert={r.ort}
+                    aufAenderung={(neu) => regelAendern(i, { ort: neu })}
                     className={eingabeKlasse}
                   />
                 </Feld>
@@ -223,17 +263,17 @@ export default function EinstellungenSeite() {
       <Karte titel="Allgemein">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Feld label="Standard-Ort für neue Termine">
-            <input
-              value={s.ort}
-              onChange={(e) => aendern((d) => void (d.settings.ort = e.target.value))}
+            <EntkoppeltesFeld
+              wert={s.ort}
+              aufAenderung={(neu) => aendern((d) => void (d.settings.ort = neu))}
               className={eingabeKlasse}
             />
           </Feld>
           <Feld label="Backup-Erinnerung nach (Tagen)">
-            <input
+            <EntkoppeltesFeld
               type="number"
-              value={s.backupErinnerungTage}
-              onChange={(e) => aendern((d) => void (d.settings.backupErinnerungTage = Number(e.target.value) || 0))}
+              wert={String(s.backupErinnerungTage)}
+              aufAenderung={(neu) => aendern((d) => void (d.settings.backupErinnerungTage = Number(neu) || 0))}
               className={eingabeKlasse}
             />
           </Feld>
