@@ -21,6 +21,9 @@ import { remoteLaden, remoteSpeichern } from '@/lib/storage/client';
 
 const LS_CODE = 'gemeindeplaner.zugriffscode';
 
+/** Einheitliche Meldung, wenn der Server wegen zu vieler Versuche bremst (429). */
+const LIMIT_TEXT = 'Zu viele Versuche, bitte kurz warten.';
+
 export type MeldungArt = 'ok' | 'info' | 'warnung' | 'fehler';
 export interface Meldung {
   art: MeldungArt;
@@ -39,7 +42,7 @@ interface AppState {
   meldung: Meldung | null;
 
   init: () => Promise<void>;
-  setCode: (code: string) => Promise<'ok' | 'unauthorized' | 'offline' | 'error'>;
+  setCode: (code: string) => Promise<'ok' | 'unauthorized' | 'ratelimit' | 'offline' | 'error'>;
   aendern: (mut: (d: DataFile) => void) => Promise<void>;
   personAnlegen: (felder: Partial<Person> & { name: string }) => Promise<string>;
   ersetzen: (neu: DataFile) => Promise<void>;
@@ -87,6 +90,10 @@ export const useApp = create<AppState>((set, get) => ({
     const r = await remoteLaden(code);
     if (r.status === 'unauthorized') {
       set({ brauchtCode: true, bereit: true });
+      return;
+    }
+    if (r.status === 'ratelimit') {
+      set({ bereit: true, online: true, meldung: { art: 'warnung', text: LIMIT_TEXT } });
       return;
     }
     if (r.status === 'offline' || r.status === 'error') {
@@ -189,6 +196,7 @@ export const useApp = create<AppState>((set, get) => ({
     }
     const r = await remoteLaden(code);
     if (r.status === 'unauthorized') return set({ brauchtCode: true });
+    if (r.status === 'ratelimit') return set({ meldung: { art: 'warnung', text: LIMIT_TEXT } });
     if (r.status === 'offline') return set({ online: false });
     if (r.status === 'error') return;
     set({ online: true });
@@ -296,6 +304,11 @@ async function pushLokal(
         break;
       } else if (res.status === 'unauthorized') {
         set({ brauchtCode: true });
+        break;
+      } else if (res.status === 'ratelimit') {
+        // Server bremst (429). Aenderung bleibt pending und wird spaeter erneut
+        // versucht; Konflikt-/Offline-Pfad bleiben unberuehrt.
+        set({ online: true, meldung: { art: 'warnung', text: LIMIT_TEXT } });
         break;
       } else if (res.status === 'offline') {
         set({ online: false }); // bleibt pending

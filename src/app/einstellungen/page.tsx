@@ -346,7 +346,7 @@ function RollenEditor() {
 function ZugriffsCode({
   setCode,
 }: {
-  setCode: (c: string) => Promise<'ok' | 'unauthorized' | 'offline' | 'error'>;
+  setCode: (c: string) => Promise<'ok' | 'unauthorized' | 'ratelimit' | 'offline' | 'error'>;
 }) {
   const [wert, setWert] = useState('');
   const [rueck, setRueck] = useState<{ art: 'ok' | 'fehler'; text: string } | null>(null);
@@ -357,6 +357,7 @@ function ZugriffsCode({
     const status = await setCode(c);
     if (status === 'ok') setRueck({ art: 'ok', text: 'Code gemerkt und geprüft.' });
     else if (status === 'unauthorized') setRueck({ art: 'fehler', text: 'Zugriffscode ist falsch.' });
+    else if (status === 'ratelimit') setRueck({ art: 'fehler', text: 'Zu viele Versuche, bitte kurz warten.' });
     else setRueck({ art: 'fehler', text: 'Konnte den Code nicht prüfen (Verbindung/Server).' });
   }
 
