@@ -35,9 +35,16 @@ export function beteiligungAn(t: Termin, personId: string): Rollenbeteiligung[] 
   return rollen;
 }
 
-/** Berechnet die Historie einer Person aus allen Terminen. */
-export function historieFuer(personId: string, termine: Termin[]): PersonHistorie {
-  const heute = heuteIso();
+/**
+ * Berechnet die Historie einer Person aus allen Terminen.
+ * `heute` ist injizierbar (Default = heutiges Datum), damit die
+ * Vergangenheit/Zukunft-Trennung ohne globales Date-Mocking testbar ist.
+ */
+export function historieFuer(
+  personId: string,
+  termine: Termin[],
+  heute: string = heuteIso(),
+): PersonHistorie {
   const beteiligungen: TerminBeteiligung[] = [];
   let naechster: string | null = null;
 
@@ -75,9 +82,10 @@ export function historieFuer(personId: string, termine: Termin[]): PersonHistori
 export function historieAlle(
   personen: Person[],
   termine: Termin[],
+  heute: string = heuteIso(),
 ): Map<string, PersonHistorie> {
   const out = new Map<string, PersonHistorie>();
-  for (const p of personen) out.set(p.id, historieFuer(p.id, termine));
+  for (const p of personen) out.set(p.id, historieFuer(p.id, termine, heute));
   return out;
 }
 
@@ -99,8 +107,11 @@ export interface PersonArchiv {
   kommende: TerminBeteiligung[];   // aufsteigend nach Datum (naechste zuerst)
 }
 
-export function archivFuer(personId: string, termine: Termin[]): PersonArchiv {
-  const heute = heuteIso();
+export function archivFuer(
+  personId: string,
+  termine: Termin[],
+  heute: string = heuteIso(),
+): PersonArchiv {
   const vergangene: TerminBeteiligung[] = [];
   const kommende: TerminBeteiligung[] = [];
 
