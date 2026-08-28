@@ -151,6 +151,7 @@ export const useApp = create<AppState>((set, get) => ({
     neu.updatedAt = new Date().toISOString(); // version bleibt (Server erhoeht sie)
     await idbSpeichern(neu);
     await idbPendingSetzen(true);
+    lokaleGeneration++; // markiert eine neue lokale Aenderung (siehe pushLokal)
     set({ data: neu, pending: true });
     await pushLokal(set, get);
   },
@@ -179,6 +180,7 @@ export const useApp = create<AppState>((set, get) => ({
     const behalten: DataFile = { ...neu, version: get().data?.version ?? neu.version };
     await idbSpeichern(behalten);
     await idbPendingSetzen(true);
+    lokaleGeneration++; // Import ist ebenfalls eine neue lokale Aenderung
     set({ data: behalten, pending: true });
     await pushLokal(set, get);
   },
@@ -265,10 +267,22 @@ export const useApp = create<AppState>((set, get) => ({
  * vom Server erhoehten version. Da immer der komplette DataFile gespeichert
  * wird, genuegt dieses Koaleszieren; wir muessen nicht N Saves aufreihen.
  *
+ * WICHTIG (frueherer Datenverlust): Nach einem erfolgreichen Save ist einzig die
+ * vom Server erhoehte `version` autoritativ – NICHT der Inhalt. Frueher wurde der
+ * Store nach jedem OK blind mit der Server-Antwort ueberschrieben. Kam waehrend
+ * des (u.U. hunderte ms langen) Netzwerk-Roundtrips eine weitere lokale Aenderung,
+ * ueberschrieb die Antwort des *alten* Standes diese neue Aenderung wieder – sie
+ * war weg, `pending` sprang auf false, und kein Sync-Klick reichte sie je nach.
+ * Genau das aeusserte sich als "mein Geraet pusht die Daten nicht". Deshalb
+ * zaehlt `lokaleGeneration` jede lokale Aenderung mit: hat sie sich waehrend des
+ * Saves erhoeht, behalten wir den neueren lokalen Inhalt, schreiben nur die
+ * frische version fort und pushen erneut, statt zu ueberschreiben.
+ *
  * Die Modul-Variablen liegen bewusst ausserhalb des Stores (Single-Instance-App).
  */
 let speichertGerade = false; // genau ein POST gleichzeitig
 let erneutNoetig = false; // waehrend des POST kam eine weitere Aenderung
+let lokaleGeneration = 0; // +1 pro lokaler Aenderung (aendern/ersetzen)
 
 /** Schiebt den aktuellen lokalen Stand zum Server (mit Versionspruefung). */
 async function pushLokal(
@@ -288,15 +302,29 @@ async function pushLokal(
   try {
     do {
       erneutNoetig = false;
-      const { data, code } = get();
-      if (!data) break;
-      const res = await remoteSpeichern(data, data.version, code);
+      const { data: gesendet, code } = get();
+      if (!gesendet) break;
+      const genVorher = lokaleGeneration; // Stand VOR dem Netzwerk-Roundtrip
+      const res = await remoteSpeichern(gesendet, gesendet.version, code);
       if (res.status === 'ok') {
-        // Server hat die version erhoeht; der naechste Schleifendurchlauf nutzt
-        // dadurch automatisch die frische baseVersion -> keine Selbst-Konflikte.
-        await idbSpeichern(res.data);
-        await idbPendingSetzen(false);
-        set({ data: res.data, pending: false, online: true });
+        // Kam waehrend des Saves eine weitere lokale Aenderung? Dann ist nur die
+        // vom Server erhoehte version brauchbar – den neueren lokalen Inhalt
+        // behalten und erneut pushen, statt ihn mit der Antwort zu ueberschreiben.
+        // Die Entscheidung faellt synchron direkt nach dem await (kein
+        // Zwischen-await), damit sich `lokaleGeneration` hier nicht mehr aendern
+        // kann; die idb-Schreibvorgaenge ziehen den Cache danach nur nach.
+        if (lokaleGeneration !== genVorher) {
+          const fort: DataFile = { ...(get().data as DataFile), version: res.data.version };
+          set({ data: fort, online: true }); // pending BLEIBT true
+          erneutNoetig = true; // neueren Inhalt mit frischer version nachschieben
+          await idbSpeichern(fort);
+        } else {
+          // Server ist autoritativ; naechster Durchlauf nutzt die frische
+          // baseVersion automatisch -> keine Selbst-Konflikte.
+          set({ data: res.data, pending: false, online: true });
+          await idbSpeichern(res.data);
+          await idbPendingSetzen(false);
+        }
       } else if (res.status === 'conflict') {
         // Echter Fremd-Konflikt: das andere Geraet hat geschrieben. Schleife
         // verlassen, den Serverstand merken, die UI loest den Konflikt auf.
