@@ -344,6 +344,14 @@ async function pushLokal(
       } else if (res.status === 'invalid') {
         set({ meldung: { art: 'fehler', text: 'Ungültige Daten: ' + res.fehler.slice(0, 3).join(' ') } });
         break;
+      } else if (res.status === 'error') {
+        // Serverfehler (z.B. 500): den KONKRETEN Grund zeigen. Frueher lief das
+        // in die generische Meldung "Speichern fehlgeschlagen." – ein reiner
+        // Konfigurations-/Speicherfehler (z.B. Blob-Store nicht verbunden) blieb
+        // damit unsichtbar und unerklaerlich. Die Aenderung bleibt pending, ein
+        // spaeterer Versuch (Sync-Klick/Fokus) kann sie nachreichen.
+        set({ online: true, meldung: { art: 'fehler', text: 'Speichern fehlgeschlagen: ' + String(res.fehler) } });
+        break;
       } else {
         set({ meldung: { art: 'fehler', text: 'Speichern fehlgeschlagen.' } });
         break;
