@@ -1,0 +1,973 @@
+{
+  "schema": 1,
+  "version": 1,
+  "updatedAt": "2026-09-19T12:23:31.465046Z",
+  "personen": [
+    {
+      "id": "p_001",
+      "name": "Markus Otto",
+      "dienstnummer": 1,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_002",
+      "name": "Matthias Dreßler",
+      "dienstnummer": 2,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_003",
+      "name": "Ralf Goldhahn",
+      "dienstnummer": 3,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_004",
+      "name": "Uwe Kazmirzak",
+      "dienstnummer": 4,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_005",
+      "name": "Bernd Brunnner",
+      "dienstnummer": 6,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_006",
+      "name": "Rolf Harnack",
+      "dienstnummer": 9,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_007",
+      "name": "Michael Sonntag",
+      "dienstnummer": 11,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_008",
+      "name": "Rainer Bauer",
+      "dienstnummer": 15,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_009",
+      "name": "Thomas Lehmann",
+      "dienstnummer": 17,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_010",
+      "name": "Tobias Bergner",
+      "dienstnummer": 20,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_011",
+      "name": "Gunter Bieber",
+      "dienstnummer": 27,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_012",
+      "name": "Rüdiger Dörfel",
+      "dienstnummer": 37,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_013",
+      "name": "Matthias Heidel",
+      "dienstnummer": 38,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_014",
+      "name": "Thomas Neustadt",
+      "dienstnummer": 40,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_015",
+      "name": "Daniel Hernes",
+      "dienstnummer": 46,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_016",
+      "name": "Matthias Weinhold",
+      "dienstnummer": 47,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_017",
+      "name": "Falko Pflugbeil",
+      "dienstnummer": 50,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_018",
+      "name": "Thilo Dickert",
+      "dienstnummer": 51,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_019",
+      "name": "Klaus Kaiser",
+      "dienstnummer": 53,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_020",
+      "name": "Wolfgang Käthner",
+      "dienstnummer": 54,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_021",
+      "name": "Marco Dickert",
+      "dienstnummer": 66,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_022",
+      "name": "Reinhardt Winkler",
+      "dienstnummer": 73,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_023",
+      "name": "Patrice Rosse",
+      "dienstnummer": 84,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_024",
+      "name": "Wolfgang Müller",
+      "dienstnummer": 86,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "",
+      "aktiv": true
+    },
+    {
+      "id": "p_025",
+      "name": "Dag Ruddigkeit",
+      "dienstnummer": null,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "Plankürzel: D.R",
+      "aktiv": true
+    },
+    {
+      "id": "p_026",
+      "name": "Matthias Adomat",
+      "dienstnummer": null,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "Plankürzel: M.A",
+      "aktiv": true
+    },
+    {
+      "id": "p_027",
+      "name": "Jens Ulbrich",
+      "dienstnummer": null,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "Plankürzel: J.U",
+      "aktiv": true
+    },
+    {
+      "id": "p_028",
+      "name": "Andreas Swoboda",
+      "dienstnummer": null,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "Plankürzel: A.S",
+      "aktiv": true
+    },
+    {
+      "id": "p_029",
+      "name": "Matthias Nönnig",
+      "dienstnummer": null,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "Plankürzel: M.N",
+      "aktiv": true
+    },
+    {
+      "id": "p_030",
+      "name": "Thomas Zeschke",
+      "dienstnummer": null,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "Plankürzel: T.Z",
+      "aktiv": true
+    },
+    {
+      "id": "p_031",
+      "name": "Reinhard Pilz",
+      "dienstnummer": null,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "Plankürzel: R.P",
+      "aktiv": true
+    },
+    {
+      "id": "p_032",
+      "name": "Daniel Ulbricht",
+      "dienstnummer": null,
+      "email": "",
+      "telefon": "",
+      "rollen": [
+        "prediger"
+      ],
+      "notiz": "Plankürzel: D.U",
+      "aktiv": true
+    }
+  ],
+  "termine": [
+    {
+      "id": "t_20261004_1500",
+      "datum": "2026-10-04",
+      "uhrzeit": "15:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": "p_003",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Erntedankstunde – wenn möglich mit Abendmahl",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261011_1000",
+      "datum": "2026-10-11",
+      "uhrzeit": "10:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Eigenbesetzung (E) – durch die Gemeinde selbst",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261018_1000",
+      "datum": "2026-10-18",
+      "uhrzeit": "10:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": "p_004",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261025_1000",
+      "datum": "2026-10-25",
+      "uhrzeit": "10:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": "p_014",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261101_1400",
+      "datum": "2026-11-01",
+      "uhrzeit": "14:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "event",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Keine Gemeinschaftsstunde – Verabschiedung Pfr. Schubert in der Stadtkirche Limbach, 14:00 Uhr",
+      "istEvent": true,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261108_1500",
+      "datum": "2026-11-08",
+      "uhrzeit": "15:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Eigenbesetzung (E) – Thomas Lange (Mission Osteuropa)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261115_1000",
+      "datum": "2026-11-15",
+      "uhrzeit": "10:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": "p_002",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261122_1000",
+      "datum": "2026-11-22",
+      "uhrzeit": "10:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": "p_003",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261129_1000",
+      "datum": "2026-11-29",
+      "uhrzeit": "10:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": "p_004",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261206_1500",
+      "datum": "2026-12-06",
+      "uhrzeit": "15:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": "p_030",
+      "abendmahl": true,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Austauschdienst Bezirk Chemnitz Stadt; Gemeinschaftsstunde mit Abendmahl (mA)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261213_1000",
+      "datum": "2026-12-13",
+      "uhrzeit": "10:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": "p_003",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261220_1000",
+      "datum": "2026-12-20",
+      "uhrzeit": "10:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Eigenbesetzung (E) – durch die Gemeinde selbst",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261227_1000",
+      "datum": "2026-12-27",
+      "uhrzeit": "10:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "gemeinschaftsstunde",
+      "predigerId": "p_004",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261007_1930",
+      "datum": "2026-10-07",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Frauenstunde (F); Prediger-Nr. 138 (Gastprediger, nicht in Legende)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261014_1930",
+      "datum": "2026-10-14",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "selbst besetzen (S) – noch offen",
+      "istEvent": false,
+      "status": "offen",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261021_1930",
+      "datum": "2026-10-21",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": "p_004",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261028_1930",
+      "datum": "2026-10-28",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": "p_032",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Austauschdienst Bezirk Rochlitz",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261104_1930",
+      "datum": "2026-11-04",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Frauenstunde (F); Prediger-Nr. 145 (Gastprediger, nicht in Legende)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261111_1930",
+      "datum": "2026-11-11",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "selbst besetzen (S) – noch offen",
+      "istEvent": false,
+      "status": "offen",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261118_1930",
+      "datum": "2026-11-18",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": "p_003",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261125_1930",
+      "datum": "2026-11-25",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": "p_020",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261202_1900",
+      "datum": "2026-12-02",
+      "uhrzeit": "19:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Frauenstunde (F); Prediger-Nr. 132 (Gastprediger, nicht in Legende); Zeit geändert auf 19:00",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261209_1930",
+      "datum": "2026-12-09",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "selbst besetzen (S) – noch offen",
+      "istEvent": false,
+      "status": "offen",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261216_1930",
+      "datum": "2026-12-16",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": "p_004",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261223_1930",
+      "datum": "2026-12-23",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "selbst besetzen (S) – noch offen",
+      "istEvent": false,
+      "status": "offen",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261230_1930",
+      "datum": "2026-12-30",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "bibelstunde",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "selbst besetzen (S) – noch offen",
+      "istEvent": false,
+      "status": "offen",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261022_1900",
+      "datum": "2026-10-22",
+      "uhrzeit": "19:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "sonstiges",
+      "predigerId": "p_003",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Jugendstunde (J)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261029_1900",
+      "datum": "2026-10-29",
+      "uhrzeit": "19:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "sonstiges",
+      "predigerId": "p_003",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Jugendstunde (J)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261105_1900",
+      "datum": "2026-11-05",
+      "uhrzeit": "19:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "sonstiges",
+      "predigerId": "p_004",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Jugendstunde (J)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261112_1900",
+      "datum": "2026-11-12",
+      "uhrzeit": "19:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "sonstiges",
+      "predigerId": "p_004",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Jugendstunde (J)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261119_1900",
+      "datum": "2026-11-19",
+      "uhrzeit": "19:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "sonstiges",
+      "predigerId": "p_004",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Jugendstunde (J)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261126_1900",
+      "datum": "2026-11-26",
+      "uhrzeit": "19:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "sonstiges",
+      "predigerId": "p_003",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Jugendstunde (J)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261203_1900",
+      "datum": "2026-12-03",
+      "uhrzeit": "19:00",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "sonstiges",
+      "predigerId": "p_003",
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "Jugendstunde (J)",
+      "istEvent": false,
+      "status": "besetzt",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261002_1930",
+      "datum": "2026-10-02",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "sonstiges",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "MG (Bezeichnung lt. Plan) – selbst besetzen (S)",
+      "istEvent": false,
+      "status": "offen",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261106_1930",
+      "datum": "2026-11-06",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "sonstiges",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "MG (Bezeichnung lt. Plan) – selbst besetzen (S)",
+      "istEvent": false,
+      "status": "offen",
+      "kontaktStatus": "offen"
+    },
+    {
+      "id": "t_20261204_1930",
+      "datum": "2026-12-04",
+      "uhrzeit": "19:30",
+      "ort": "Limbach-Oberfrohna",
+      "typ": "sonstiges",
+      "predigerId": null,
+      "abendmahl": false,
+      "einleitungId": null,
+      "fahrdienstIds": [],
+      "kommentar": "MG (Bezeichnung lt. Plan) – selbst besetzen (S)",
+      "istEvent": false,
+      "status": "offen",
+      "kontaktStatus": "offen"
+    }
+  ],
+  "rotation": {
+    "einleitung": {
+      "reihenfolge": [],
+      "startIndex": 0
+    },
+    "fahrdienst": {
+      "reihenfolge": [],
+      "startIndex": 0
+    }
+  },
+  "settings": {
+    "ort": "Limbach-Oberfrohna",
+    "rollen": [
+      "prediger",
+      "einleitung",
+      "fahrdienst"
+    ],
+    "regelTermine": [
+      {
+        "aktiv": true,
+        "wochentag": 0,
+        "typ": "gemeinschaftsstunde",
+        "uhrzeit": "10:00",
+        "ersterImMonatUhrzeit": "15:00",
+        "ort": "Limbach-Oberfrohna",
+        "label": "Gemeinschaftsstunde (So)"
+      },
+      {
+        "aktiv": true,
+        "wochentag": 3,
+        "typ": "bibelstunde",
+        "uhrzeit": "19:30",
+        "ersterImMonatUhrzeit": null,
+        "ort": "Limbach-Oberfrohna",
+        "label": "Bibelstunde (Mi)"
+      }
+    ],
+    "backupErinnerungTage": 14,
+    "letztesBackup": null
+  }
+}
